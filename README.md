@@ -1,19 +1,5 @@
 # Surge Backend v1
 
-## Features
-
-Most of the useful features are for easier configuration, although there are some other packages setup to make it easier for you to start your project without worrying about installing them.
-
--   TypeScript Support
--   Test-ready with Jest configured with TypeScript
--   Async Handling with error handling if error is thrown
--   Flexible for any database or ORMs
--   Path aliases for cleaner imports
--   Nodemon for refresh on save
--   Setup build script for production; no ts-node for production
--   Security middlewares setup
--   Environment variables configured on load
-
 # Setup
 
 ## Environment Variables
@@ -23,7 +9,7 @@ Most of the useful features are for easier configuration, although there are som
 
 ## Development
 
-> This project was setup using Node.js v18.5. Please use specified version for best experience.
+> This project was setup using Node.js v18.5.
 
 1. Install dependencies with `npm install`
 2. Start developoment server with `npm run dev`
