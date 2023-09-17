@@ -40,11 +40,11 @@ export async function sendMail(to: string, subject: string, message: string) {
     }
 }
 
-export async function sendOTP(to: string): Promise<boolean> {
+export async function sendOTP(to: string, otp: string): Promise<boolean> {
     const appName = process.env.APP_NAME;
 
     const subject = appName ? `${appName} - OTP` : "OTP";
-    const _otp = generateOTP(4);
+    const _otp = otp;
     const message = `${_otp}`;
     try {
         const result = await sendMail(to, subject, message);

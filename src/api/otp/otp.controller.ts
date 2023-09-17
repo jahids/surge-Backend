@@ -17,16 +17,22 @@ export const createOtp = async (req: Request, res: Response) => {
         //generate otp
         const otp = generateOTP();
         //send otp
-        const otpResult = await sendOTP(email);
+        const otpResult = await sendOTP(email, otp);
         //now save the otp
         const dbRes = await setOtp(email, otp);
-        return res.status(200).json(ApiSuccess({ email: email }, "otp sent"));
+        return res
+            .status(200)
+            .json(ApiSuccess({ email: email }, "OTP Sent!, Check Your Email."));
     } catch (error) {
         return res.status(500).send("failed to generate otp");
     }
 };
 
 export const verifyOtp = async (req: Request, res: Response) => {
+    const envLifeTime = process.env.TOKEN_LIFETIME_M ?? 3;
+
+    const tokenlifeTime = Number(envLifeTime) * 24 * 3600000;
+
     try {
         const { email, otp: oldOtp } = req.body;
         if (!email || !oldOtp) {
@@ -39,14 +45,18 @@ export const verifyOtp = async (req: Request, res: Response) => {
             //sign jwt
             const JWT_SECRET = process.env.JWT_SECRET as Secret;
             const signedToken = jwt.sign({ email: email }, JWT_SECRET, {
-                expiresIn: 30 * 24 * 3600000,
+                expiresIn: tokenlifeTime,
             });
 
-            res.cookie("token", signedToken);
+            res.cookie("token", signedToken, {
+                maxAge: tokenlifeTime,
+            });
 
             await deleteOtp(email);
 
-            return res.status(200).json(ApiSuccess(true, "otp matched"));
+            return res
+                .status(200)
+                .json(ApiSuccess({ token: signedToken }, "otp matched"));
         }
 
         return res.status(400).json(ApiError("otp didn't match."));
