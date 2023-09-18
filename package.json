@@ -21,6 +21,7 @@
   "author": "takuyadev",
   "license": "ISC",
   "dependencies": {
+    "@alpacahq/alpaca-trade-api": "^3.0.1",
     "@types/bcrypt": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.3",
     "@types/nodemailer": "^6.4.10",
