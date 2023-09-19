@@ -5,6 +5,7 @@ import { getAllCountries } from "../api/countries/countries.ctrl";
 import { createAccount } from "../api/accounts/account.controller";
 import { accountRouter } from "../api/accounts/account.routes";
 import { newsRouter } from "../api/news/news.route";
+import { StockRouter } from "../api/assets/assets.route";
 
 const indexRouter = Router();
 
@@ -19,6 +20,8 @@ indexRouter.post(`/test`, (req: Request, res: Response) => {
 indexRouter.get("/countries", getAllCountries);
 // news route
 indexRouter.use("/news", newsRouter);
+//assets or stock router
+indexRouter.use("/stock", StockRouter);
 
 indexRouter.use("/otp", otpRouter);
 indexRouter.use("/signup", signupRouter);
