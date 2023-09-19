@@ -1,6 +1,7 @@
 import axios from "axios";
 import { TradeSdk } from "./src/utils/TradeSdk";
 import { __latestQuotes__ } from "./src/utils/LatestQuotes";
+import { readFileSync, writeFileSync } from "fs";
 
 // {
 //     id: 'c1efb631-f837-4076-8ce8-f2ecdc12a85a',
@@ -91,9 +92,13 @@ const main = async () => {
     // console.log(await getAsset());
     // console.log(await orderHistory());
 
-    console.log(await createRandomOrder());
+    // console.log(await createRandomOrder());
 
     // await sellShare("ITW");
+
+    ///filter data
+
+    // const rawData = console.log("done");
 };
 
 main();
