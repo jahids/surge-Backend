@@ -4,6 +4,7 @@ import { Router, Request, Response } from "express";
 import { getAllCountries } from "../api/countries/countries.ctrl";
 import { createAccount } from "../api/accounts/account.controller";
 import { accountRouter } from "../api/accounts/account.routes";
+import { newsRouter } from "../api/news/news.route";
 
 const indexRouter = Router();
 
@@ -16,6 +17,8 @@ indexRouter.post(`/test`, (req: Request, res: Response) => {
 
 //public routes
 indexRouter.get("/countries", getAllCountries);
+// news route
+indexRouter.use("/news", newsRouter);
 
 indexRouter.use("/otp", otpRouter);
 indexRouter.use("/signup", signupRouter);
