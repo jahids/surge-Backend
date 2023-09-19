@@ -6,6 +6,7 @@ import { createAccount } from "../api/accounts/account.controller";
 import { accountRouter } from "../api/accounts/account.routes";
 import { newsRouter } from "../api/news/news.route";
 import { StockRouter } from "../api/assets/assets.route";
+import { moversRouter } from "../api/topmovers/topMovers.route";
 
 const indexRouter = Router();
 
@@ -22,6 +23,8 @@ indexRouter.get("/countries", getAllCountries);
 indexRouter.use("/news", newsRouter);
 //assets or stock router
 indexRouter.use("/stock", StockRouter);
+//top movers router
+indexRouter.use("/movers", moversRouter);
 
 indexRouter.use("/otp", otpRouter);
 indexRouter.use("/signup", signupRouter);
