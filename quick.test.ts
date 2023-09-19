@@ -37,15 +37,15 @@ const getAsset = async () => {
 
 const createRandomOrder = async () => {
     const res = await getAsset();
-    // console.log(`🔥🔥 `, res);
-    const order = await TradeSdk.createOrder({
-        symbol: res.symbol, // any valid ticker symbol
-        qty: 13,
-        side: "buy",
-        type: "market",
-        time_in_force: "day",
-        client_order_id: "this_jakir_order",
-    });
+    console.log(`🔥🔥 `, res);
+    // const order = await TradeSdk.createOrder({
+    //     symbol: res.symbol, // any valid ticker symbol
+    //     qty: 13,
+    //     side: "buy",
+    //     type: "market",
+    //     time_in_force: "day",
+    //     client_order_id: "this_jakir_order",
+    // });
 };
 
 const orderHistory = async () => {
@@ -89,7 +89,9 @@ const main = async () => {
     // console.log(await TradeSdk.getPosition("BIAF"));
 
     // console.log(await getAsset());
-    console.log(await orderHistory());
+    // console.log(await orderHistory());
+
+    console.log(await createRandomOrder());
 
     // await sellShare("ITW");
 };
@@ -116,3 +118,6 @@ main();
 //     });
 
 // tst();
+
+// resources
+// https://hbr.org/2014/11/the-best-performing-ceos-in-the-world
