@@ -6,6 +6,8 @@ import { createAccount } from "../api/accounts/account.controller";
 import { accountRouter } from "../api/accounts/account.routes";
 import { newsRouter } from "../api/news/news.route";
 import { StockRouter } from "../api/assets/assets.route";
+import { symbolRouter } from "../api/symbol-category/symbol.router";
+import { getCategories } from "../api/symbol-category/symbol.controller";
 
 const indexRouter = Router();
 
@@ -20,13 +22,19 @@ indexRouter.post(`/test`, (req: Request, res: Response) => {
 indexRouter.get("/countries", getAllCountries);
 // news route
 indexRouter.use("/news", newsRouter);
-//assets or stock router
-indexRouter.use("/stock", StockRouter);
 
 indexRouter.use("/otp", otpRouter);
 indexRouter.use("/signup", signupRouter);
 
-//private routes
+//🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐 private routes 🔏🔏🔏🔏🔏🔏🔏🔏🔏🔏
+
+//     🧲🧰🧰🧲🧲🧲🧲🧲🏮🏮    miscellaneous   🔦🏮🏮🏮🏮🏮📔🏮🏮
+indexRouter.use("/categories", getCategories);
+//     🧲🧰🧰🧲🧲🧲🧲🧲🏮🏮    miscellaneous   🔦🏮🏮🏮🏮🏮📔🏮🏮
 indexRouter.use("/accounts", accountRouter);
+//assets or stock router
+indexRouter.use("/stock", StockRouter);
+//get symbol and info
+indexRouter.use(`/symbol`, symbolRouter);
 
 export default indexRouter;

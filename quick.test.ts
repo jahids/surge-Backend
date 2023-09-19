@@ -2,6 +2,7 @@ import axios from "axios";
 import { TradeSdk } from "./src/utils/TradeSdk";
 import { __latestQuotes__ } from "./src/utils/LatestQuotes";
 import { readFileSync, writeFileSync } from "fs";
+import yahooFinance from "yahoo-finance2";
 
 // {
 //     id: 'c1efb631-f837-4076-8ce8-f2ecdc12a85a',
@@ -68,6 +69,11 @@ const sellShare = async (symbol: string) => {
 
 const main = async () => {
     console.clear();
+
+    const result = await yahooFinance.quote("USFR");
+    const result2 = await yahooFinance.quote("USM");
+    console.log(result);
+    console.log(`🔥🎇🎆🔥`, result2);
 
     // const accountData = await TradeSdk.getAccount();
     // console.log(`account status : ${accountData.status}`);
