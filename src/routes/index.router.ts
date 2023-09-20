@@ -8,6 +8,7 @@ import { newsRouter } from "../api/news/news.route";
 import { StockRouter } from "../api/assets/assets.route";
 import { symbolRouter } from "../api/symbol-category/symbol.router";
 import { getCategories } from "../api/symbol-category/symbol.controller";
+import { moversRouter } from "../api/topmovers/topMovers.route";
 
 const indexRouter = Router();
 
@@ -22,6 +23,10 @@ indexRouter.post(`/test`, (req: Request, res: Response) => {
 indexRouter.get("/countries", getAllCountries);
 // news route
 indexRouter.use("/news", newsRouter);
+//assets or stock router
+indexRouter.use("/stock", StockRouter);
+//top movers router
+indexRouter.use("/movers", moversRouter);
 
 indexRouter.use("/otp", otpRouter);
 indexRouter.use("/signup", signupRouter);
