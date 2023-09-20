@@ -8,7 +8,7 @@ export const getAllStock = async (req: Request, res: Response) => {
         const Allstock = await TradeSdk.getAssets({
             status: "active",
         });
-        console.log("newsData", Allstock);
+        // console.log("newsData", Allstock);
         const data = Allstock.filter(
             (v: any) =>
                 v.status == "active" &&
@@ -31,7 +31,7 @@ export const getStocks = async (req: Request, res: Response) => {
         const Allstock = await TradeSdk.getAssets({
             status: "active",
         });
-        console.log("newsData", Allstock);
+        // console.log("newsData", Allstock);
         const data = Allstock.filter(
             (v: any) =>
                 v.status == "active" &&

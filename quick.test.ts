@@ -39,15 +39,16 @@ const getAsset = async () => {
 
 const createRandomOrder = async () => {
     const res = await getAsset();
-    console.log(`🔥🔥 `, res);
-    // const order = await TradeSdk.createOrder({
-    //     symbol: res.symbol, // any valid ticker symbol
-    //     qty: 13,
-    //     side: "buy",
-    //     type: "market",
-    //     time_in_force: "day",
-    //     client_order_id: "this_jakir_order",
-    // });
+    // console.log(`🔥🔥 `, res);
+    const order = await TradeSdk.createOrder({
+        symbol: res.symbol, // any valid ticker symbol
+        qty: 13,
+        side: "buy",
+        type: "market",
+        time_in_force: "day",
+        client_order_id: "this_jakir_order",
+    });
+    console.log(`################`, order);
 };
 
 const orderHistory = async () => {
