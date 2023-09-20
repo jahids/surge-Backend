@@ -20,27 +20,48 @@ export const getAllStock = async (req: Request, res: Response) => {
         return res.status(500).json(ApiError((error as Error).message));
     }
 };
-
-export const getStocks = async (req: Request, res: Response) => {
+export const buyStock = async (req: Request, res: Response) => {
+    const { symboldata, quantity } = req.body;
     try {
-        const { limit } = req.query;
-        let queryLimit = Number(limit) ?? 0;
-        if (!queryLimit) {
-            queryLimit = 50;
-        }
-        const Allstock = await TradeSdk.getAssets({
-            status: "active",
+        const order = await TradeSdk.createOrder({
+            symbol: "TSLA",
+            qty: 5,
+            side: "buy",
+            type: "market",
+            time_in_force: "day",
+            client_order_id: "random-id-id3",
         });
-        // console.log("newsData", Allstock);
-        const data = Allstock.filter(
-            (v: any) =>
-                v.status == "active" &&
-                v.tradable == true &&
-                v.class != "crypto",
-        );
+        return res.status(200).json(ApiSuccess(order));
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(ApiError((error as Error).message));
+    }
+};
 
-        return res.status(200).json(ApiSuccess(data));
+export const SellStock = async (req: Request, res: Response) => {
+    const { symboldata, quantity } = req.body;
+    try {
+        const order = await TradeSdk.createOrder({
+            symbol: symboldata,
+            qty: quantity,
+            side: "sell",
+            type: "market",
+            time_in_force: "day",
+            client_order_id: Math.random(),
+        });
+
+        console.log("error order", order);
+        return res.status(200).json(ApiSuccess(order));
     } catch (error) {
         return res.status(500).json(ApiError((error as Error).message));
     }
 };
+// export const position = async (req: Request, res: Response) => {
+
+//     try {
+//        const postionapiCall = TradeSdk.getPositions()
+//         return res.status(200).json(ApiSuccess(postionapiCall));
+//     } catch (error) {
+//         return res.status(500).json(ApiError((error as Error).message));
+//     }
+// };

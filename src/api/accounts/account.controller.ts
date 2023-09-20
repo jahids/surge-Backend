@@ -11,7 +11,9 @@ import { ApiSuccess } from "../../utils/ApiSuccess";
 export const createAccount = async (req: Request, res: Response) => {
     try {
         //create account in alpaca
+        // console.log(`🔥🎇🎆🔥`, req.body);
         const acData = await createAlpacaAccount(req.body, req.ip);
+
         // update db user
         return res
             .status(200)
