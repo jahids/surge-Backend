@@ -9,10 +9,10 @@ export const getallnews = async () => {
     return data;
 };
 
-export const getSpecificNews = async (symbol: string) => {
+export const getSpecificNews = async (symbol: string, limit: string) => {
     const alpacaTradeInstance = getAlpacaTradeInstance();
     const { data } = await alpacaTradeInstance.get(
-        `/v1beta1/news?symbols=${symbol}`,
+        `/v1beta1/news?symbols=${symbol}&limit=${limit}`,
     );
     return data;
 };

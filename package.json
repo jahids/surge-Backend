@@ -8,7 +8,8 @@
     "test": "jest",
     "start": "node -r module-alias/register ./dist/app.js",
     "build": "tsc -p ./tsconfig.prod.json",
-    "dev": "nodemon \"src/app.ts\""
+    "dev": "nodemon \"src/app.ts\"",
+    "dev-remote": "ts-node \"src/app.ts\" --port 5678"
   },
   "_moduleAliases": {
     "@/routes": "dist/routes",
@@ -23,10 +24,12 @@
   "dependencies": {
     "@alpacahq/alpaca-trade-api": "^3.0.1",
     "@types/bcrypt": "^5.0.0",
+    "@types/cookie-parser": "^1.4.4",
     "@types/jsonwebtoken": "^9.0.3",
     "@types/nodemailer": "^6.4.10",
     "axios": "^1.5.0",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",

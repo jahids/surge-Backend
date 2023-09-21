@@ -1,12 +1,16 @@
 import { Router, Request, Response } from "express";
 import { ApiError } from "../../utils/ApiError";
+import {
+    placeOrder,
+    placeSellOrder,
+    singleOrder,
+    userOrderList,
+} from "./trade.order.ctrl";
 
-const tradeOrder = Router();
+export const tradeOrderRouter = Router();
 
-tradeOrder.get("/", (req: Request, res: Response) => {
-    try {
-        const getUpdate = "test function";
-    } catch (error) {
-        return res.status(500).send(ApiError((error as Error).message));
-    }
-});
+tradeOrderRouter.get("/", userOrderList);
+tradeOrderRouter.get("/:order_id", singleOrder);
+tradeOrderRouter.post(`/`, placeOrder);
+
+tradeOrderRouter.post(`/sell`, placeSellOrder);

@@ -68,8 +68,12 @@ export async function setOrUpdateSymbol(symbol: string, obj: ISymbolModel) {
 }
 
 export async function createSymbol(symbolObj: ISymbolModel) {
-    const result = await symbolModel.create(symbolObj);
-    return result;
+    try {
+        const result = await symbolModel.create(symbolObj);
+        return result;
+    } catch (error) {
+        return {};
+    }
 }
 
 export async function deleteSymbol(symbol: string) {

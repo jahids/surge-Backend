@@ -15,6 +15,7 @@ export async function getSymbolInfo(req: Request, res: Response) {
         if (!name || typeof name != "string") {
             return res.status(400).json(ApiError("symbol name not found!"));
         }
+        console.log(`name=`, name);
 
         const dbResult = await findSymbol(name);
 

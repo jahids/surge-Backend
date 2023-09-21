@@ -65,47 +65,18 @@ const sellShare = async (symbol: string) => {
         type: "market",
         time_in_force: "day",
     });
+
     console.log(result);
 };
 
 const main = async () => {
     console.clear();
+    const query = "AAPL";
+    const queryOptions = { period1: "2021-05-08" /* ... */ };
+    const result = await yahooFinance.chart(query, queryOptions);
 
-    const result = await yahooFinance.quote("USFR");
-    const result2 = await yahooFinance.quote("USM");
-    console.log(result);
-    console.log(`🔥🎇🎆🔥`, result2);
-
-    // const accountData = await TradeSdk.getAccount();
-    // console.log(`account status : ${accountData.status}`);
-    // console.log(result.filter((v: any) => v.tradable));
-
-    // // const order = await TradeSdk.getOrders();
-    // console.log(order);
-    // const newResult = result.filter((v: any) => v.tradable);
-
-    // setTimeout(() => {
-    //     TradeSdk.getPositions()
-    //         .then((rs: any) => {
-    //             console.log(rs);
-    //         })
-    //         .catch((er: any) => console.log(er));
-    // }, 5 * 1000);
-
-    // console.log(result);
-
-    // console.log(await TradeSdk.getPosition("BIAF"));
-
-    // console.log(await getAsset());
-    // console.log(await orderHistory());
-
-    // console.log(await createRandomOrder());
-
-    // await sellShare("ITW");
-
-    ///filter data
-
-    // const rawData = console.log("done");
+    const quotes = await yahooFinance.quote(query);
+    console.log(quotes);
 };
 
 main();

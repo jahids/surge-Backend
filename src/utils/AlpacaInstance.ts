@@ -10,6 +10,7 @@ const AlpacaInstance = axios.create({
 
 export const getAlpacaInstance = () => {
     const auth = getAlpacaAuth();
+    console.log(`auth =`, auth, "=");
     const instance = axios.create({
         baseURL: ALPACA_BASE_URL,
         headers: {
@@ -21,5 +22,3 @@ export const getAlpacaInstance = () => {
 
     return instance;
 };
-
-export default AlpacaInstance;

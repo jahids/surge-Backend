@@ -56,7 +56,12 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
             return res
                 .status(200)
-                .json(ApiSuccess({ token: signedToken }, "otp matched"));
+                .json(
+                    ApiSuccess(
+                        { token: signedToken, email: email },
+                        "otp matched",
+                    ),
+                );
         }
 
         return res.status(400).json(ApiError("otp didn't match."));

@@ -2,7 +2,9 @@ import { getAlpacaInstance } from "../../utils/AlpacaInstance";
 import { faker, tr } from "@faker-js/faker";
 
 export const accountRequestBuilder = (obj: any) => {
-    const country = String(obj.country).toUpperCase();
+    const country = String("USA").toUpperCase();
+
+    // console.log(`dead=`, obj);
 
     const defaultData = {
         contact: {
@@ -17,7 +19,7 @@ export const accountRequestBuilder = (obj: any) => {
         identity: {
             given_name: obj.given_name,
             family_name: obj.family_name,
-            date_of_birth: obj.date_of_birth,
+            date_of_birth: new Date(obj.date_of_birth),
             //generating randomly from faker.js
             // tax_id: "666-55-4321",
             tax_id: faker.phone.number("###-##-####"),
@@ -25,7 +27,8 @@ export const accountRequestBuilder = (obj: any) => {
             country_of_citizenship: country,
             country_of_birth: country,
             country_of_tax_residence: country,
-            funding_source: ["employment_income"],
+            funding_source: obj["funding_source"],
+            // funding_source: ["employment_income"],
         },
         disclosures: {
             is_control_person: false,
@@ -59,7 +62,7 @@ export const accountRequestBuilder = (obj: any) => {
     return defaultData;
 };
 
-export const createAlpacaAccount = async (accountData: any, ip: string) => {
+export const createClientAccount = async (accountData: any, ip: string) => {
     const AlpacaInstance = getAlpacaInstance();
 
     const finalData = accountRequestBuilder({ ...accountData, ip });

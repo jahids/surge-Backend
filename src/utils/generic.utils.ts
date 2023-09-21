@@ -4,8 +4,12 @@ export const toBase64 = (str: string) => {
 };
 
 export const getAlpacaAuth = () => {
-    const key = process.env.ALPACA_API_KEY;
-    const secret = process.env.ALPACA_API_SECRET;
+    const key = `CKMAMH76MCV4R43AGQXU`;
+    const secret = `pN01d13W1dlPKq46PYUIbBVUJMRTss3JBNjKFOtf`;
+
+    // const key = process.env.ALPACA_API_KEY;
+    // const secret = process.env.ALPACA_API_SECRET;
+
     if (!key || !secret) {
         throw "alpaca key/secret is missing.check env";
     }
@@ -13,6 +17,18 @@ export const getAlpacaAuth = () => {
     return toBase64(buildString);
 };
 
+export const getAppPort = () => {
+    const portText = "--port";
+    let __PORT__: string | number = 5678;
+    const argList = process.argv.slice(2);
+    const idx = argList.indexOf(portText);
+    if (idx !== -1 && Number(argList[idx + 1])) {
+        __PORT__ = argList[idx + 1];
+    } else if (process.env?.PORT) {
+        __PORT__ = process.env.PORT;
+    }
+    return __PORT__;
+};
 // trade auth
 
 // export const getAlphaTradeAuth = () => {
