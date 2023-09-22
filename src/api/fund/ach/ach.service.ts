@@ -1,18 +1,71 @@
 import { getAlpacaInstance } from "../../../utils/AlpacaInstance";
-import { IBankRelationship } from "../../../types/interfaces/IBankRelationship";
+import {
+    IBankRelationship,
+    IPlaidAch,
+} from "../../../types/interfaces/IBankRelationship";
+import userModel, {
+    getUserByEmail,
+    updateAch,
+} from "../../../models/user.model";
+import { getClientById } from "../../../services/Broker.service";
+import { NumbersACH } from "plaid";
 
 const BrokerInstance = getAlpacaInstance();
 
 export const createRelation = async (
     accountId: string,
-    accountData: IBankRelationship,
+    email: string,
+    bank_name: string,
+    accountData: NumbersACH,
 ) => {
+    //find db user & check realtionship status
+    const dbUser = await getUserByEmail(email);
+    if (!dbUser?.email) {
+        //user doesn't exist
+        // return res
+        //     .status(403)
+        //     .json(ApiError(`No user found with associated Email!`));
+        throw new Error(`user doesn't exist.`);
+    }
+    //max allowed relationship at once
+    if (dbUser?.ach) {
+        //already have realtionship
+        throw new Error(`Only one relationship allowed.`);
+    }
+
+    const alpacaUser: any = await getClientById(accountId);
+
+    const {
+        identity: { given_name, family_name },
+    } = alpacaUser;
+    const fullName = given_name + " " + family_name;
+    const bankObject: IBankRelationship = {
+        account_owner_name: fullName,
+        bank_account_type: "CHECKING",
+        bank_routing_number: accountData.routing,
+        bank_account_number: accountData.account,
+        nickname: bank_name,
+    };
+
     const { data } = await BrokerInstance.post(
         `/v1/accounts/${accountId}/ach_relationships`,
-        JSON.stringify(accountData),
+        JSON.stringify(bankObject),
     );
+
+    const result = await updateAch(email, data.id);
+
     return data;
 };
+// export const createRelation = async (
+//     accountId: string,
+//     accountData: IBankRelationship,
+// ) => {
+//     const { data } = await BrokerInstance.post(
+//         `/v1/accounts/${accountId}/ach_relationships`,
+//         JSON.stringify(accountData),
+//     );
+//     return data;
+// };
 
 export const getUserAchRelationship = async (id: string) => {
     const { data } = await BrokerInstance.get(

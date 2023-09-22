@@ -14,6 +14,7 @@ import { achRouter } from "../api/fund/ach/ach.routes";
 import { AuthMiddleware } from "../middleware/auth-middleware";
 import { tradeOrderRouter } from "../api/trade-order/trade.order.route";
 import { ApiSuccess } from "../utils/ApiSuccess";
+import { plaidRouter } from "../api/plaid/plaid.route";
 
 const indexRouter = Router();
 
@@ -44,6 +45,7 @@ indexRouter.use("/signout", signout);
 
 indexRouter.use(AuthMiddleware);
 
+indexRouter.use("/plaid", plaidRouter);
 // news route
 indexRouter.use("/news", newsRouter);
 //assets or stock router
@@ -55,6 +57,7 @@ indexRouter.use("/categories", getCategories);
 
 indexRouter.use("/accounts", accountRouter);
 indexRouter.use("/ach", achRouter);
+
 //assets or stock router
 indexRouter.use("/stock", StockRouter);
 //get symbol and info

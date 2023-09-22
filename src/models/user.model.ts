@@ -69,16 +69,16 @@ export const updateAlpacaId = async (email: string, id: string) => {
 
 export const updateAch = async (email: string, relationId: string) => {
     try {
-        // const user = await userModel
-        //     .findOneAndUpdate(
-        //         { email: email },
-        //         {
-        //             $set: {
-        //                 alpaca_id: id,
-        //             },
-        //         },
-        //     )
-        //     .exec();
+        const user = await userModel
+            .findOneAndUpdate(
+                { email: email },
+                {
+                    $set: {
+                        ach: relationId,
+                    },
+                },
+            )
+            .exec();
         return { email, relationId };
     } catch (error) {
         throw new Error("failed to get user from db");

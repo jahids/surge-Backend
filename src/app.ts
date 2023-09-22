@@ -7,7 +7,7 @@ import hpp from "hpp";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
-
+import http from "http";
 // Setup .env variables for app usage
 dotenv.config();
 
@@ -59,10 +59,10 @@ app.use(hpp());
 app.use("/api", indexRouter);
 
 // Listen to specified port in .env or default 5000
-
+const server = http.createServer(app);
 async function startServer() {
     await connectToDatabase();
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
         console.clear();
         console.log(`Last Run : ${new Date().toLocaleTimeString()}`);
         console.log(`Server Started :  http://localhost:${PORT}`);

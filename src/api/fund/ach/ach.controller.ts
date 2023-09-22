@@ -23,6 +23,7 @@ export const createAchRelationship = async (req: Request, res: Response) => {
         const { email, id: alpacaId } = verifyJwt(token);
         const { bank_name, routing_number, account_number } = req.body;
         // return res.json({ ...req.body, cok: verifyJwt(token) });
+
         //find db user & check realtionship status
         const dbUser = await getUserByEmail(email);
         if (!dbUser?.email) {
@@ -52,7 +53,7 @@ export const createAchRelationship = async (req: Request, res: Response) => {
             nickname: bank_name,
         };
         // console.log(`🎇🎇✨✨`, { ...bankObject, id: alpacaId });
-        const result = await createRelation(alpacaId, bankObject);
+        // const result = await createRelation(alpacaId, bankObject);
         // now update relationship in user db
 
         return res.status(200).json(ApiSuccess(`Relationship Established!`));

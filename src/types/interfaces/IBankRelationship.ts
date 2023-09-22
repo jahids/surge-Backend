@@ -7,3 +7,10 @@ export interface IBankRelationship {
     processor_token?: string;
     instant?: boolean;
 }
+
+export interface IPlaidAch {
+    account: string;
+    account_id: string;
+    routing: string;
+    wire_routing: string;
+}
