@@ -108,6 +108,7 @@ export const addFundToAccount = async (
     );
     return data;
 };
+
 export const accountFundHistory = async (accountId: string) => {
     const { data } = await BrokerInstance.get(
         `/v1/accounts/${accountId}/transfers`,

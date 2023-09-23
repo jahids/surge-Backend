@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { ApiError } from "../../utils/ApiError";
-import { getCombinedSymbol } from "./symbol.service";
+import {
+    getCombinedSymbol,
+    findCurrentPrice,
+    getCombindedPrice,
+} from "./symbol.service";
 import { ApiSuccess } from "../../utils/ApiSuccess";
 import {
     ISymbolModel,
@@ -15,15 +19,21 @@ export async function getSymbolInfo(req: Request, res: Response) {
         if (!name || typeof name != "string") {
             return res.status(400).json(ApiError("symbol name not found!"));
         }
-        console.log(`name=`, name);
 
         const dbResult = await findSymbol(name);
 
-        if (dbResult && dbResult.symbol) {
-            return res.status(200).json(dbResult);
+        const price = await getCombindedPrice(name);
+        if (dbResult && dbResult.symbol && dbResult.logo) {
+            return res
+                .status(200)
+                .json({ ...dbResult.toObject(), price: price });
         }
+        // console.log(`name=`, name);
+        // const price = await findCurrentPrice(name);
 
         const { finnhub, yahoo } = await getCombinedSymbol(name);
+
+        // console.log(`yahoo : `, yahoo);
 
         if (finnhub?.weburl && yahoo) {
             yahoo.weburl = finnhub.weburl;
@@ -32,7 +42,6 @@ export async function getSymbolInfo(req: Request, res: Response) {
         //create symbol db object
         const finalObj: ISymbolModel = {
             symbol: finnhub?.ticker ?? name,
-
             name: finnhub.name ?? yahoo?.name,
             description: yahoo?.description ?? "",
             weburl: finnhub?.weburl ?? "",
@@ -46,11 +55,14 @@ export async function getSymbolInfo(req: Request, res: Response) {
         if (finnhub.ipo) {
             finalObj.ipo = new Date(finnhub.ipo);
         }
+
         const dbObj = await createSymbol(finalObj);
+
         // console.log(dbObj);
 
-        return res.status(200).json(ApiSuccess(finalObj));
+        return res.status(200).json(ApiSuccess({ ...finalObj, price: price }));
     } catch (error) {
+        // console.log(`e🥼🖼🎞🎎`, error);
         return res.status(500).send(ApiError((error as Error).message + "!"));
     }
 }
@@ -59,6 +71,14 @@ export async function getCategories(req: Request, res: Response) {
     try {
         const result = await distinctSymbol();
         return res.status(200).json(ApiSuccess(result));
+    } catch (error) {
+        return res.status(500).send(ApiError((error as Error).message));
+    }
+}
+
+export async function currentPrice(req: Request, res: Response) {
+    try {
+        console.log("dest");
     } catch (error) {
         return res.status(500).send(ApiError((error as Error).message));
     }

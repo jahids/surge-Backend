@@ -107,16 +107,28 @@ export const addFundFromAch = async (req: Request, res: Response) => {
         const email = (req as ICustomRequest).user_mail;
         const alpaca_id = (req as ICustomRequest).alpaca_id;
 
-        const { relation_id, amount } = req.body;
+        const dbUser = await getUserByEmail(email);
+
+        if (!dbUser?.ach) {
+            return res.status(401).json(ApiError(`no ach relation found!`));
+        }
+
+        const { amount } = req.body;
+        const relation_id = dbUser.ach;
 
         // delete
         const result = await addFundToAccount(alpaca_id, relation_id, amount);
 
         return res.status(200).json(ApiSuccess(result, `$${amount} added!`));
     } catch (error) {
+        // console.log(`error :`, error);
+        if (error instanceof AxiosError) {
+            return res.status(500).json(ApiError(error.response?.data));
+        }
         return res.status(500).json(ApiError((error as Error).message));
     }
 };
+
 export const fundHistory = async (req: Request, res: Response) => {
     try {
         const email = (req as ICustomRequest).user_mail;
