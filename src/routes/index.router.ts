@@ -15,6 +15,7 @@ import { AuthMiddleware } from "../middleware/auth-middleware";
 import { tradeOrderRouter } from "../api/trade-order/trade.order.route";
 import { ApiSuccess } from "../utils/ApiSuccess";
 import { plaidRouter } from "../api/plaid/plaid.route";
+import { historicalRoute } from "../api/historicaldata/historicaldata.route";
 
 const indexRouter = Router();
 
@@ -35,6 +36,8 @@ indexRouter.get("/countries", getAllCountries);
 
 //top movers router
 indexRouter.use("/movers", moversRouter);
+// historical data
+indexRouter.use("/history", historicalRoute);
 
 indexRouter.use("/otp", otpRouter);
 indexRouter.use("/signup", signupRouter);
