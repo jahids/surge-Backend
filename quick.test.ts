@@ -1,6 +1,8 @@
 import axios from "axios";
 import { TradeSdk } from "./src/utils/TradeSdk";
 import { __latestQuotes__ } from "./src/utils/LatestQuotes";
+import { readFileSync, writeFileSync } from "fs";
+import yahooFinance from "yahoo-finance2";
 
 // {
 //     id: 'c1efb631-f837-4076-8ce8-f2ecdc12a85a',
@@ -37,15 +39,16 @@ const getAsset = async () => {
 
 const createRandomOrder = async () => {
     const res = await getAsset();
-    console.log(`🔥🔥 `, res);
-    // const order = await TradeSdk.createOrder({
-    //     symbol: res.symbol, // any valid ticker symbol
-    //     qty: 13,
-    //     side: "buy",
-    //     type: "market",
-    //     time_in_force: "day",
-    //     client_order_id: "this_jakir_order",
-    // });
+    // console.log(`🔥🔥 `, res);
+    const order = await TradeSdk.createOrder({
+        symbol: res.symbol, // any valid ticker symbol
+        qty: 13,
+        side: "buy",
+        type: "market",
+        time_in_force: "day",
+        client_order_id: "this_jakir_order",
+    });
+    console.log(`################`, order);
 };
 
 const orderHistory = async () => {
@@ -62,38 +65,18 @@ const sellShare = async (symbol: string) => {
         type: "market",
         time_in_force: "day",
     });
+
     console.log(result);
 };
 
 const main = async () => {
     console.clear();
+    const query = "AAPL";
+    const queryOptions = { period1: "2021-05-08" /* ... */ };
+    const result = await yahooFinance.chart(query, queryOptions);
 
-    // const accountData = await TradeSdk.getAccount();
-    // console.log(`account status : ${accountData.status}`);
-    // console.log(result.filter((v: any) => v.tradable));
-
-    // // const order = await TradeSdk.getOrders();
-    // console.log(order);
-    // const newResult = result.filter((v: any) => v.tradable);
-
-    // setTimeout(() => {
-    //     TradeSdk.getPositions()
-    //         .then((rs: any) => {
-    //             console.log(rs);
-    //         })
-    //         .catch((er: any) => console.log(er));
-    // }, 5 * 1000);
-
-    // console.log(result);
-
-    // console.log(await TradeSdk.getPosition("BIAF"));
-
-    // console.log(await getAsset());
-    // console.log(await orderHistory());
-
-    console.log(await createRandomOrder());
-
-    // await sellShare("ITW");
+    const quotes = await yahooFinance.quote(query);
+    console.log(quotes);
 };
 
 main();

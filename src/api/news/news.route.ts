@@ -4,4 +4,4 @@ import { News, specificNews } from "./news.controller";
 export const newsRouter = Router();
 
 newsRouter.get("/", News);
-newsRouter.get("/:symbol", specificNews);
+newsRouter.get("/:symbol/:limit", specificNews);

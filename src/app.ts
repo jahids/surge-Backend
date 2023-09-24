@@ -6,7 +6,8 @@ import helmet from "helmet";
 import hpp from "hpp";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
-
+import cookieParser from "cookie-parser";
+import http from "http";
 // Setup .env variables for app usage
 dotenv.config();
 
@@ -14,9 +15,10 @@ dotenv.config();
 import indexRouter from "./routes/index.router";
 import { _corsConfig_ } from "./configs/cors.config";
 import { connectToDatabase } from "./configs/db";
+import { getAppPort } from "./utils/generic.utils";
 
 // Setup constant variables
-const PORT = process.env.PORT || 5000;
+const PORT = getAppPort();
 const RATE_TIME_LIMIT = Number(process.env.RATE_TIME_LIMIT) || 15;
 const RATE_REQUEST_LIMIT = Number(process.env.RATE_REQUEST_LIMIT) || 100;
 
@@ -25,6 +27,9 @@ const app: Application = express();
 
 // Body parser
 app.use(express.json());
+//cookie parser
+
+app.use(cookieParser());
 
 // Detailed server logging
 
@@ -54,10 +59,10 @@ app.use(hpp());
 app.use("/api", indexRouter);
 
 // Listen to specified port in .env or default 5000
-
+const server = http.createServer(app);
 async function startServer() {
     await connectToDatabase();
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
         console.clear();
         console.log(`Last Run : ${new Date().toLocaleTimeString()}`);
         console.log(`Server Started :  http://localhost:${PORT}`);

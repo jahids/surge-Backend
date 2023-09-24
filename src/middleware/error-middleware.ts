@@ -1,4 +1,4 @@
-import { ApiError } from "@/types/interfaces/interfaces.common";
+import { ApiError } from "../types/interfaces/interfaces.common";
 import { Request, Response, NextFunction } from "express";
 
 // @desc Handles error responses from throw errors

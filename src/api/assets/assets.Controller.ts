@@ -8,7 +8,7 @@ export const getAllStock = async (req: Request, res: Response) => {
         const Allstock = await TradeSdk.getAssets({
             status: "active",
         });
-        console.log("newsData", Allstock);
+        // console.log("newsData", Allstock);
         const data = Allstock.filter(
             (v: any) =>
                 v.status == "active" &&
@@ -24,15 +24,16 @@ export const buyStock = async (req: Request, res: Response) => {
     const { symboldata, quantity } = req.body;
     try {
         const order = await TradeSdk.createOrder({
-            symbol: symboldata,
-            qty: quantity,
+            symbol: "TSLA",
+            qty: 5,
             side: "buy",
             type: "market",
             time_in_force: "day",
-            client_order_id: Math.random(),
+            client_order_id: "random-id-id3",
         });
         return res.status(200).json(ApiSuccess(order));
     } catch (error) {
+        console.log(error);
         return res.status(500).json(ApiError((error as Error).message));
     }
 };

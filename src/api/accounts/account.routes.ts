@@ -8,6 +8,7 @@ import { getSingleAccount } from "./account.service";
 
 export const accountRouter = Router();
 
-accountRouter.get("/", allAccounts); //get all the accounts
+accountRouter.get("/all", allAccounts); //get all the accounts
+accountRouter.get("/", singleAccounts); //get a single accounts
 accountRouter.get("/:accountId", singleAccounts); //get a single accounts
 accountRouter.post(`/`, createAccount); //create a single account
