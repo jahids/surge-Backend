@@ -1,6 +1,16 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, Types, Document } from "mongoose";
 
-const userSchema = new mongoose.Schema(
+export interface IUserModel {
+    _id: Types.ObjectId;
+    email: string;
+    password: string;
+    alpaca_id: string;
+    ach: string;
+    bank: string;
+    watch_list: Array<string>;
+}
+
+const userSchema = new Schema<IUserModel>(
     {
         email: {
             type: String,
@@ -23,10 +33,11 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: false,
         },
-        watch_list: {
-            type: Array,
-            default: [],
-        },
+        watch_list: [
+            {
+                type: String,
+            },
+        ],
     },
     {
         timestamps: true,

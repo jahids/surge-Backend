@@ -1,5 +1,5 @@
 import { tr } from "@faker-js/faker";
-import mongoose from "mongoose";
+import mongoose, { Types, Document } from "mongoose";
 
 export interface ISymbolModel {
     symbol?: string;
@@ -19,6 +19,8 @@ const symbolSchema = new mongoose.Schema<ISymbolModel>(
             type: String,
             required: true,
             unique: true,
+
+            index: true,
         },
         name: {
             type: String,

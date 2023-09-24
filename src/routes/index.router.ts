@@ -16,6 +16,7 @@ import { tradeOrderRouter } from "../api/trade-order/trade.order.route";
 import { ApiSuccess } from "../utils/ApiSuccess";
 import { plaidRouter } from "../api/plaid/plaid.route";
 import { historicalRoute } from "../api/historicaldata/historicaldata.route";
+import { socialRouter } from "../api/social/social.route";
 
 const indexRouter = Router();
 
@@ -52,7 +53,7 @@ indexRouter.use("/plaid", plaidRouter);
 // news route
 indexRouter.use("/news", newsRouter);
 //assets or stock router
-indexRouter.use("/stock", StockRouter);
+// indexRouter.use("/stock", StockRouter);
 
 //     🧲🧰🧰🧲🧲🧲🧲🧲🏮🏮    miscellaneous   🔦🏮🏮🏮🏮🏮📔🏮🏮
 
@@ -68,6 +69,9 @@ indexRouter.use(`/symbol`, symbolRouter);
 
 // order
 indexRouter.use(`/order`, tradeOrderRouter);
+
+//social
+indexRouter.use(`/social`, socialRouter);
 
 indexRouter.get(`/movers-stats/:symbol`, (req: Request, res: Response) => {
     res.status(200).json(

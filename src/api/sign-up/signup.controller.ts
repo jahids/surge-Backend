@@ -107,7 +107,9 @@ export const signin = async (req: Request, res: Response) => {
             res.cookie("token", signedToken, {
                 maxAge: getTokenLife(),
             });
-            return res.status(200).json(ApiSuccess({ multiStepCompleted }));
+            return res
+                .status(200)
+                .json(ApiSuccess({ multiStepCompleted, token: signedToken }));
         }
 
         return res.status(400).json(ApiError("user doesn't exist!"));

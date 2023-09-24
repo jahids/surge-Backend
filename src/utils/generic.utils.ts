@@ -1,14 +1,15 @@
+import mongoose from "mongoose";
 export const toBase64 = (str: string) => {
     const encoded = Buffer.from(str).toString("base64");
     return encoded;
 };
 
 export const getAlpacaAuth = () => {
-    const key = `CKMAMH76MCV4R43AGQXU`;
-    const secret = `pN01d13W1dlPKq46PYUIbBVUJMRTss3JBNjKFOtf`;
+    // const key = `CKMAMH76MCV4R43AGQXU`;
+    // const secret = `pN01d13W1dlPKq46PYUIbBVUJMRTss3JBNjKFOtf`;
 
-    // const key = process.env.ALPACA_API_KEY;
-    // const secret = process.env.ALPACA_API_SECRET;
+    const key = process.env.ALPACA_API_KEY;
+    const secret = process.env.ALPACA_API_SECRET;
 
     if (!key || !secret) {
         throw "alpaca key/secret is missing.check env";
@@ -28,6 +29,11 @@ export const getAppPort = () => {
         __PORT__ = process.env.PORT;
     }
     return __PORT__;
+};
+
+export const strToId = (str: any) => {
+    const id = new mongoose.Schema.Types.ObjectId(str);
+    return id;
 };
 // trade auth
 

@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export interface IOtp {
+    _id: Types.ObjectId;
     otp: string;
     email: string;
 }
