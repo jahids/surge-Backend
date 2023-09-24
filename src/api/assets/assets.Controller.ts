@@ -42,12 +42,12 @@ export const buyStock = async (req: Request, res: Response) => {
     const { symboldata, quantity } = req.body;
     try {
         const order = await TradeSdk.createOrder({
-            symbol: "TSLA",
-            qty: 5,
+            symbol: symboldata,
+            qty: quantity,
             side: "buy",
             type: "market",
             time_in_force: "day",
-            client_order_id: "random-id-id3",
+            client_order_id: Math.random(),
         });
         return res.status(200).json(ApiSuccess(order));
     } catch (error) {
