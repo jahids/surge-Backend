@@ -8,6 +8,7 @@ export interface IUserModel {
     ach: string;
     bank: string;
     watch_list: Array<string>;
+    following?: Array<Types.ObjectId>;
 }
 
 const userSchema = new Schema<IUserModel>(
@@ -36,6 +37,13 @@ const userSchema = new Schema<IUserModel>(
         watch_list: [
             {
                 type: String,
+            },
+        ],
+        following: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "user",
+                default: [],
             },
         ],
     },
@@ -98,4 +106,36 @@ export const updateAch = async (email: string, relationId: string) => {
     } catch (error) {
         throw new Error("failed to get user from db");
     }
+};
+
+export const updateFollowing = async (
+    userEmail: string,
+    targetUser: string,
+) => {
+    const tdp = new mongoose.Types.ObjectId(targetUser);
+    const dbUser = await userModel.findOne({ email: userEmail }).exec();
+    if (dbUser) {
+        const newFollowerList = dbUser.following?.filter(
+            (v) => v.toString() != targetUser,
+        );
+        if (newFollowerList?.length == dbUser.following?.length) {
+            newFollowerList?.push(tdp);
+        }
+        //update following list
+        const updated = await userModel
+            .findOneAndUpdate(
+                { email: userEmail },
+                {
+                    $set: {
+                        following: newFollowerList,
+                    },
+                },
+                {
+                    new: true,
+                },
+            )
+            .exec();
+        return updated;
+    }
+    return null;
 };
