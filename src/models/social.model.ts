@@ -141,6 +141,68 @@ export async function PostsById(postId: string) {
     return result;
 }
 
+export async function PostsByUserId(userId: string) {
+    // console.log(`user id = ${userId}`);
+    const newId = new mongoose.Types.ObjectId(userId);
+
+    // const result2 = await socialModel
+    //     .findOne({ _id: newId })
+    //     .populate(["user", "comments.user_id", "symbol.symbol"]);
+
+    const result = await socialModel.aggregate([
+        {
+            $match: {
+                user: {
+                    $eq: newId,
+                },
+            },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "user",
+                foreignField: "_id",
+                as: "user",
+            },
+        },
+
+        {
+            $lookup: {
+                from: "symbols",
+                localField: "symbol",
+                foreignField: "symbol",
+                as: "symbol",
+            },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "comments.user_id",
+                foreignField: "_id",
+                as: "comment_user",
+            },
+        },
+        {
+            $project: {
+                "user.password": 0,
+                "comment_user.password": 0,
+            },
+        },
+    ]);
+
+    return result;
+}
+
+export async function MultipleUserPosts(userIds: Types.ObjectId[]) {
+    const data = [];
+    for (let i = 0; i < userIds.length; i++) {
+        console.log(`userId = ${userIds[i].toString()}`);
+        const tst = await PostsByUserId(userIds[i].toString());
+        data.push(tst);
+    }
+    return data;
+}
+
 export async function addCommets(post_id: string, comment: IComment) {
     // const id = new mongoose.Types.ObjectId(post_id);
     const result = await socialModel.findOneAndUpdate(

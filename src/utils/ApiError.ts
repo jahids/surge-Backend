@@ -1,3 +1,5 @@
+import { AxiosError } from "axios";
+
 // @desc Structures data from error with more relevant data
 export class ApiRequestError extends Error {
     statusCode: number;
@@ -11,14 +13,19 @@ export class ApiRequestError extends Error {
     }
 }
 
-export function ApiError(
-    error: string = "Default Error Message",
-    data: any = null,
-) {
+export function ApiError(error: any, data: any = null) {
+    let finalError = error;
+    if (error instanceof Error) {
+        finalError = error.message;
+    }
+    if (error instanceof AxiosError) {
+        finalError = error.response?.data;
+    }
+
     const resultObj = {
         success: false,
         data: data,
-        error: error ?? "Default Success Message",
+        error: finalError ?? "Default Success Message",
     };
 
     return resultObj;

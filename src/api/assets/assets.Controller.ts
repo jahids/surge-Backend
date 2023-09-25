@@ -7,23 +7,18 @@ let epicData: any = null;
 
 export const getAllStock = async (req: Request, res: Response) => {
     try {
-        const { limit, start } = req.query;
-        const finalLimit = Number(limit) ?? 1;
-        const finalStart = Number(start) ?? 0;
+        const { limit, start, item } = req.query;
+        const finalLimit = Number(limit)
+            ? Number(limit)
+            : Number.MAX_SAFE_INTEGER;
+        const finalStart = Number(start) ? Number(start) : 0;
 
-        // if (Number(limit)) {
-        //     finalLimit = Number(limit);
-        // }
-        // if(Number(start)){
-        //     finalStart = Number(s)
-        // }
         let Allstock: any = null;
         if (!epicData) {
             Allstock = await TradeSdk.getAssets({
                 status: "active",
             });
-            // console.log("newsData", Allstock);
-            // console.log("limit=", finalLimit, " orignal limit ", limit);
+
             const data = Allstock.filter(
                 (v: any) =>
                     v.status == "active" &&
@@ -32,7 +27,23 @@ export const getAllStock = async (req: Request, res: Response) => {
             );
             epicData = data;
         }
-        const finalData = epicData.slice(finalStart, finalLimit);
+
+        // console.log(
+        //     `final limit : ${finalLimit}   start : ${finalStart} --> item = ${item}`,
+        // );
+        let finalData = epicData;
+
+        if (item) {
+            const query = item.toString().toUpperCase();
+
+            finalData = epicData.filter((v: any) =>
+                v.name.toUpperCase().includes(query),
+            );
+            if (finalData.length == 0) {
+                finalData = epicData;
+            }
+        }
+        finalData = finalData.slice(finalStart, finalLimit);
         return res.status(200).json(ApiSuccess(finalData, epicData?.length));
     } catch (error) {
         return res.status(500).json(ApiError((error as Error).message));

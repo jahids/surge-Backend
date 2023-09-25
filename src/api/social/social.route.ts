@@ -10,13 +10,19 @@ import {
 import { ICustomRequest } from "../../types/interfaces/ICustomRequest";
 import { getUserByEmail } from "../../models/user.model";
 import {
+    getPeople,
     getSinglePost,
+    getUserFollowingPosts,
+    getUserPosts,
     postComment,
     updatePostReaction,
     updateUserFollowing,
 } from "./social.controller";
 
 export const socialRouter = Router();
+
+//get list of social users
+socialRouter.get(`/people`, getPeople);
 
 //get social feed of a  user
 socialRouter.get(`/social-feed`, (req: Request, res: Response) => {
@@ -32,7 +38,10 @@ socialRouter.post(`/post`, async (req: Request, res: Response) => {
 
 //get a post
 socialRouter.get(`/post/:id`, getSinglePost);
-
+//get posts of a user
+socialRouter.get(`/post/user/:userId`, getUserPosts);
+//get list of a users following post
+socialRouter.get(`/posts/following`, getUserFollowingPosts);
 //delete a post
 socialRouter.delete(`/post/:id`, (req: Request, res: Response) => {
     // get specific post

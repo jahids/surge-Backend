@@ -63,9 +63,20 @@ export const getUserByEmail = async (email: string) => {
         throw new Error("failed to get user from db");
     }
 };
+export const findUserByDbId = async (id: string) => {
+    try {
+        const user = await userModel.findOne({ _id: id }).exec();
+        return user;
+    } catch (error) {
+        throw new Error("failed to get user from db");
+    }
+};
 export const getUserByAlpacaId = async (id: string) => {
     try {
-        const user = await userModel.findOne({ alpaca_id: id }).exec();
+        const user = await userModel
+            .findOne({ alpaca_id: id })
+            .select("-password")
+            .exec();
         return user;
     } catch (error) {
         throw new Error("failed to get user from db");
@@ -138,4 +149,12 @@ export const updateFollowing = async (
         return updated;
     }
     return null;
+};
+
+export const allUser = async () => {
+    const result = await userModel
+        .find({ alpaca_id: { $ne: null } })
+        .select(["alpaca_id"])
+        .exec();
+    return result;
 };
