@@ -6,73 +6,83 @@ import { ApiError } from "../../utils/ApiError";
 let epicData: any = null;
 
 export const getAllStock = async (req: Request, res: Response) => {
-    try {
-        const { limit, start } = req.query;
-        const finalLimit = Number(limit) ?? 1;
-        const finalStart = Number(start) ?? 0;
+  try {
+    const { limit, start, item } = req.query;
+    const finalLimit = Number(limit) ?? 1;
+    const finalStart = Number(start) ?? 0;
+    console.log("query ", item);
 
-        // if (Number(limit)) {
-        //     finalLimit = Number(limit);
-        // }
-        // if(Number(start)){
-        //     finalStart = Number(s)
-        // }
-        let Allstock: any = null;
-        if (!epicData) {
-            Allstock = await TradeSdk.getAssets({
-                status: "active",
-            });
-            // console.log("newsData", Allstock);
-            // console.log("limit=", finalLimit, " orignal limit ", limit);
-            const data = Allstock.filter(
-                (v: any) =>
-                    v.status == "active" &&
-                    v.tradable == true &&
-                    v.class != "crypto",
-            );
-            epicData = data;
-        }
-        const finalData = epicData.slice(finalStart, finalLimit);
-        return res.status(200).json(ApiSuccess(finalData, epicData?.length));
-    } catch (error) {
-        return res.status(500).json(ApiError((error as Error).message));
+    // if (Number(limit)) {
+    //     finalLimit = Number(limit);
+    // }
+    // if(Number(start)){
+    //     finalStart = Number(s)
+    // }
+    let Allstock: any = null;
+    if (!epicData) {
+      Allstock = await TradeSdk.getAssets({
+        status: "active",
+      });
+      // console.log("newsData", Allstock);
+      // console.log("limit=", finalLimit, " orignal limit ", limit);
+      const data = Allstock.filter(
+        (v: any) =>
+          v.status == "active" && v.tradable == true && v.class != "crypto"
+      );
+      epicData = data;
+
+      console.log("data-->", data);
     }
+
+    let finalData = epicData.slice(finalStart, finalLimit);
+
+    // Check if the 'item' query parameter is not null, then apply filtering
+    if (item ) {
+      finalData = finalData.filter((v: any) => v.name.includes(item));
+    }
+
+    console.log("final dtaa", finalData);
+
+    return res.status(200).json(ApiSuccess(finalData, epicData?.length));
+  } catch (error) {
+    return res.status(500).json(ApiError((error as Error).message));
+  }
 };
 export const buyStock = async (req: Request, res: Response) => {
-    const { symboldata, quantity } = req.body;
-    try {
-        const order = await TradeSdk.createOrder({
-            symbol: symboldata,
-            qty: quantity,
-            side: "buy",
-            type: "market",
-            time_in_force: "day",
-            client_order_id: Math.random(),
-        });
-        return res.status(200).json(ApiSuccess(order));
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json(ApiError((error as Error).message));
-    }
+  const { symboldata, quantity } = req.body;
+  try {
+    const order = await TradeSdk.createOrder({
+      symbol: symboldata,
+      qty: quantity,
+      side: "buy",
+      type: "market",
+      time_in_force: "day",
+      client_order_id: Math.random(),
+    });
+    return res.status(200).json(ApiSuccess(order));
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(ApiError((error as Error).message));
+  }
 };
 
 export const SellStock = async (req: Request, res: Response) => {
-    const { symboldata, quantity } = req.body;
-    try {
-        const order = await TradeSdk.createOrder({
-            symbol: symboldata,
-            qty: quantity,
-            side: "sell",
-            type: "market",
-            time_in_force: "day",
-            client_order_id: Math.random(),
-        });
+  const { symboldata, quantity } = req.body;
+  try {
+    const order = await TradeSdk.createOrder({
+      symbol: symboldata,
+      qty: quantity,
+      side: "sell",
+      type: "market",
+      time_in_force: "day",
+      client_order_id: Math.random(),
+    });
 
-        console.log("error order", order);
-        return res.status(200).json(ApiSuccess(order));
-    } catch (error) {
-        return res.status(500).json(ApiError((error as Error).message));
-    }
+    console.log("error order", order);
+    return res.status(200).json(ApiSuccess(order));
+  } catch (error) {
+    return res.status(500).json(ApiError((error as Error).message));
+  }
 };
 // export const position = async (req: Request, res: Response) => {
 

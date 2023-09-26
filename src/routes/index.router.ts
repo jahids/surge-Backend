@@ -47,7 +47,7 @@ indexRouter.use("/signout", signout);
 
 //🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐 private routes
 
-indexRouter.use(AuthMiddleware);
+// indexRouter.use(AuthMiddleware);
 
 indexRouter.use("/plaid", plaidRouter);
 // news route
