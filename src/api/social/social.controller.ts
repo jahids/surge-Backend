@@ -104,7 +104,8 @@ export const updatePostReaction = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const email = (req as ICustomRequest).user_mail;
-        const result = await updateLike(id, email);
+        const dbId = (req as ICustomRequest).dbId;
+        const result = await updateLike(id, dbId);
         // console.log(`result : `, result);
         return res.status(200).json(ApiSuccess(result));
     } catch (error) {

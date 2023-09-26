@@ -31,7 +31,11 @@ export const createAccount = async (req: Request, res: Response) => {
         // update db user
         const dbUser = await updateAlpacaId(email_address, id);
         //set http cookie with data
-        const signedToken = await generateJwt({ email: email_address, id: id });
+        const signedToken = await generateJwt({
+            email: email_address,
+            id: id,
+            dbId: dbUser?._id,
+        });
 
         res.cookie("token", signedToken, {
             maxAge: getTokenLife(),
@@ -84,12 +88,10 @@ export const singleAccountsByDbId = async (req: Request, res: Response) => {
         const dbData = await findUserByDbId(dbId);
         if (dbData) {
             const acData = await getSingleAccount(dbData.alpaca_id);
-
             return res
                 .status(200)
                 .json(ApiSuccess({ alpaca: acData, db: dbData }));
         }
-
         return res.status(404).json(ApiError("db user not found!"));
 
         // return res.status(200).json(req.body);

@@ -8,3 +8,7 @@ import { ApiSuccess } from "../../utils/ApiSuccess";
 export const getUserById = async (req: Request, res: Response) => {
 	res.send("test");
 };
+
+export const getSelf = async (req : Request, res  : Response)=>{
+	
+};

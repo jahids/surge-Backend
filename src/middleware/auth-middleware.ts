@@ -39,6 +39,7 @@ export const AuthMiddleware = (
         const decoded = verifyJwt(req.cookies?.token);
         (req as ICustomRequest).user_mail = decoded?.email;
         (req as ICustomRequest).alpaca_id = decoded?.id;
+        (req as ICustomRequest).dbId = decoded?.dbId;
         next();
     } catch (error) {
         return res.status(403).json(ApiError("jwt not verified!"));

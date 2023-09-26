@@ -50,6 +50,8 @@ indexRouter.use("/signout", signout);
 
 indexRouter.use(AuthMiddleware);
 
+//
+
 indexRouter.use("/plaid", plaidRouter);
 // news route
 indexRouter.use("/news", newsRouter);
@@ -71,7 +73,7 @@ indexRouter.use(`/symbol`, symbolRouter);
 // order
 indexRouter.use(`/order`, tradeOrderRouter);
 //user
-// indexRouter.use(`/user`, userRouter);
+indexRouter.use(`/user`, userRouter);
 
 //social
 indexRouter.use(`/social`, socialRouter);
