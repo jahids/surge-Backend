@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 
 export async function encryptPassword(password: string) {
     const saltRound = Number(process.env.PASSWORD_SALT_ROUND) ?? 10;

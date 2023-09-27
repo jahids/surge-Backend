@@ -9,8 +9,10 @@ import { ApiSuccess } from "../../utils/ApiSuccess";
 import {
     ISymbolModel,
     createSymbol,
+    distinctCategory,
     distinctSymbol,
     findSymbol,
+    particularCategorySymbols,
 } from "../../models/symbol.model";
 
 export async function getSymbolInfo(req: Request, res: Response) {
@@ -69,7 +71,35 @@ export async function getSymbolInfo(req: Request, res: Response) {
 
 export async function getCategories(req: Request, res: Response) {
     try {
-        const result = await distinctSymbol();
+        const { name } = req.query;
+        let result = null;
+        if (name) {
+            result = await particularCategorySymbols(name.toString());
+            return res.status(200).json(ApiSuccess(result));
+        }
+        result = await distinctCategory();
+        return res.status(200).json(ApiSuccess(result));
+    } catch (error) {
+        return res.status(500).send(ApiError((error as Error).message));
+    }
+}
+
+// export async function getSymbols(req: Request, res: Response) {
+//     try {
+//         const { category } = req.query;
+//         if(!category){
+
+//         }
+//         const result = await particularCategorySymbols(category?.toString());
+//         return res.status(200).json(ApiSuccess(result));
+//     } catch (error) {
+//         return res.status(500).send(ApiError((error as Error).message));
+//     }
+// }
+
+export async function getCategoryNameList(req: Request, res: Response) {
+    try {
+        const result = await distinctCategory();
         return res.status(200).json(ApiSuccess(result));
     } catch (error) {
         return res.status(500).send(ApiError((error as Error).message));

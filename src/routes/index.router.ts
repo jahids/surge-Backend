@@ -7,7 +7,10 @@ import { accountRouter } from "../api/accounts/account.routes";
 import { newsRouter } from "../api/news/news.route";
 import { StockRouter } from "../api/assets/assets.route";
 import { symbolRouter } from "../api/symbol-category/symbol.router";
-import { getCategories } from "../api/symbol-category/symbol.controller";
+import {
+    getCategories,
+    getCategoryNameList,
+} from "../api/symbol-category/symbol.controller";
 import { moversRouter } from "../api/topmovers/topMovers.route";
 import { signin, signout } from "../api/sign-up/signup.controller";
 import { achRouter } from "../api/fund/ach/ach.routes";
@@ -61,6 +64,7 @@ indexRouter.use("/news", newsRouter);
 //     🧲🧰🧰🧲🧲🧲🧲🧲🏮🏮    miscellaneous   🔦🏮🏮🏮🏮🏮📔🏮🏮
 
 indexRouter.use("/categories", getCategories);
+indexRouter.use("/categories-name", getCategoryNameList);
 
 indexRouter.use("/accounts", accountRouter);
 indexRouter.use("/ach", achRouter);

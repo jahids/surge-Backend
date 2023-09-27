@@ -1,18 +1,28 @@
+import { faker } from "@faker-js/faker";
 import mongoose, { Schema, Types, Document } from "mongoose";
+
+const defaultPfp = `https://www.gravatar.com/avatar/00000000000000000000000000000000?d=retro`;
 
 export interface IUserModel {
     _id: Types.ObjectId;
+    name: string;
     email: string;
     password: string;
     alpaca_id: string;
     ach: string;
     bank: string;
     watch_list: Array<string>;
+    pfp?: string;
     following?: Array<Types.ObjectId>;
 }
 
 const userSchema = new Schema<IUserModel>(
     {
+        name: {
+            type: String,
+            required: false,
+            default: faker.person.firstName() + " " + faker.person.lastName(),
+        },
         email: {
             type: String,
             required: true,
@@ -25,6 +35,11 @@ const userSchema = new Schema<IUserModel>(
         alpaca_id: {
             type: String,
             required: false,
+        },
+        pfp: {
+            type: String,
+            required: false,
+            default: defaultPfp,
         },
         ach: {
             type: String,
@@ -91,6 +106,23 @@ export const updateAlpacaId = async (email: string, id: string) => {
                 {
                     $set: {
                         alpaca_id: id,
+                    },
+                },
+            )
+            .exec();
+        return user;
+    } catch (error) {
+        throw new Error("failed to get user from db");
+    }
+};
+export const updateUserName = async (email: string, name: string) => {
+    try {
+        const user = await userModel
+            .findOneAndUpdate(
+                { email: email },
+                {
+                    $set: {
+                        name: name,
                     },
                 },
             )

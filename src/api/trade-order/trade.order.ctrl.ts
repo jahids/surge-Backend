@@ -88,19 +88,17 @@ export const placeOrder = async (req: Request, res: Response) => {
         }
 
         const orderResult = await createOrder(accountId, req.body);
-
-        // const orderResult = _data;
-        // const { data: orderResult } = { data: { id: "tw-werw-234-sdf" } };
-        //order created , now post to social.
-
-        console.log(`user id = ${dbUser._id}`);
+        console.log(`🎁🎀`, req.body);
+        // console.log(`user id = ${dbUser._id}`);
         const postObj: ISocialModel = {
             symbol: orderResult.symbol,
             user: new Types.ObjectId(dbUser.id),
             order_id: orderResult.id as string,
+            buyer_id: accountId,
             text: (req.body?.post as string) ?? "",
+            buying_price: req.body?.totalPrice,
             like: [],
-            links: req.body?.links ?? [],
+            links: req.body?.links || [],
             order_type: (orderResult?.order_type as orderType) ?? " market",
         };
         const post = await createSocialPost(postObj);

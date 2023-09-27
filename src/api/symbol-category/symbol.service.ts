@@ -2,6 +2,7 @@ import FinnhubInstance from "../../utils/FinnhubInstance";
 import yahooFinance from "yahoo-finance2";
 import { IFinnhubSymbol } from "../../types/interfaces/IFinnhub";
 import axios from "axios";
+import { __symbolCache__ } from "../../utils/cacheManger";
 export const getFinnhubSymbol = async (
     symbol: string = "TSLA",
 ): Promise<IFinnhubSymbol | any> => {
@@ -66,7 +67,7 @@ export const getCombinedSymbol = async (symbol: string) => {
 const findYahooPrice = async (symbol: string = "AAPL") => {
     try {
         const yprice = await yahooFinance.quote(symbol);
-        console.log(yprice);
+        // console.log(yprice);
         return yprice;
     } catch (error) {
         return null;
@@ -113,7 +114,9 @@ export const getCombindedPrice = async (symbol: string) => {
                 price: yahooPrice["regularMarketPrice"],
                 volume: yahooPrice["regularMarketVolume"],
                 yahoo: yahooPrice,
+                symbolMarket: __symbolCache__.get(symbol),
             };
+            console.log(`returning for 🔥 ${symbol}`);
             return ypr;
         }
         // console.log(`🎍🎏🎐🎐`, currentPrice, yahooPrice);

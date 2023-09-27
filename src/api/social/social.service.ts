@@ -5,7 +5,8 @@ export const getAlpacaUserFollowings = async (alpacaId: any) => {
     if (result) {
         const id = result._id;
         const following = result?.following ?? [];
-        return { dbId: id, following };
+        const pfp = result?.pfp ?? null;
+        return { dbId: id, following, pfp };
     }
     return null;
 };
@@ -17,6 +18,7 @@ export const getUsersFollowing = async (ids: [any]) => {
             if (result) {
                 ids[i].dbId = result.dbId;
                 ids[i].following = result.following;
+                ids[i].pfp = result.pfp;
             }
         }
     }

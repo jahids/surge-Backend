@@ -9,21 +9,42 @@ const cacheOptions: NodeCache.Options = {
     deleteOnExpire: true,
     maxKeys: -1,
 };
-export const cacheManger = new NodeCache(cacheOptions);
 
-export const cacheSymbolInfo = (symbol: string, info: any) => {
-    // check if it's there
-    const symbolInfo: any = cacheManger.get("symbolInfo");
-    if (symbolInfo) {
-        if (!symbolInfo[symbol]) {
-            symbolInfo[symbol] = info;
-        }
-    }
-};
+// Create separate cache instances for each object type
+const orderCache = new NodeCache({ ...cacheOptions, stdTTL: 3 * 60 * 1000 });
+export const __userCache__ = new NodeCache(cacheOptions);
+export const __symbolCache__ = new NodeCache(cacheOptions);
+const productCache = new NodeCache(cacheOptions);
 
-export const cacheAlpacaUser = (userID: string, userObj: any) => {
-    const alpacaUser: any = cacheManger.get("alpacaUser");
-    if (alpacaUser && !alpacaUser[userID]) {
-        alpacaUser[userID] = userObj;
-    }
-};
+const symbolCache = new NodeCache({ stdTTL: 0 });
+
+export function cacheOrder(order_id: string, order_data_object: any) {
+    return orderCache.set(order_id, order_data_object);
+}
+
+export function getCachedOrder(order_id: string) {
+    return orderCache.get(order_id);
+}
+
+export function cacheUser(user_id: string, user_data_object: any) {
+    return __userCache__.set(user_id, user_data_object, 600);
+}
+
+export function getCachedUser(user_id: string) {
+    return __userCache__.get(user_id);
+}
+
+export function cacheProduct(product_id: string, product_data_object: any) {
+    return productCache.set(product_id, product_data_object, 600);
+}
+
+export function getProduct(product_id: string) {
+    return productCache.get(product_id);
+}
+
+export function cacheSymbol(symbol: string, symbolData: any) {
+    return symbolCache.set(symbol, symbolData);
+}
+export function getCachedSymbol(symbol: string) {
+    return symbolCache.get(symbol);
+}

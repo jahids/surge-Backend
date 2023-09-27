@@ -85,6 +85,16 @@ export async function deleteSymbol(symbol: string) {
 export async function distinctSymbol() {
     const result = await symbolModel.aggregate([
         {
+            $match: {
+                logo: {
+                    $ne: null,
+                },
+                name: {
+                    $ne: "",
+                },
+            },
+        },
+        {
             $group: {
                 _id: "$ysector",
                 symbol_ids: { $addToSet: "$_id" },
@@ -95,6 +105,86 @@ export async function distinctSymbol() {
                 _id: 0,
                 category: "$_id",
                 symbols: "$symbol_ids",
+            },
+        },
+    ]);
+    return result;
+}
+export async function particularCategorySymbols(catName: string) {
+    const categoryName = catName || "Asset Management";
+    const result = await symbolModel.aggregate([
+        {
+            $match: {
+                logo: {
+                    $ne: null,
+                },
+                name: {
+                    $ne: "",
+                },
+                ysector: {
+                    $eq: categoryName,
+                },
+            },
+        },
+        {
+            $group: {
+                _id: "$ysector",
+                symbol_ids: { $addToSet: "$_id" },
+            },
+        },
+        {
+            $project: {
+                _id: 0,
+                category: "$_id",
+                symbols: "$symbol_ids",
+            },
+        },
+        {
+            $lookup: {
+                from: "symbols",
+                localField: "symbols",
+                foreignField: "_id",
+                as: "symbols",
+            },
+        },
+    ]);
+    if (result.length) {
+        return result[0];
+    }
+    return {};
+}
+
+export async function distinctCategory() {
+    const limit = 15;
+    const result = await symbolModel.aggregate([
+        {
+            $match: {
+                logo: {
+                    $ne: null,
+                },
+                name: {
+                    $ne: "",
+                },
+            },
+        },
+        {
+            $group: {
+                _id: "$ysector",
+                // symbol_ids: { $addToSet: "$_id" },
+                count: { $sum: 1 },
+            },
+        },
+        {
+            $match: {
+                count: { $gte: limit },
+            },
+        },
+        {
+            $project: {
+                _id: 0,
+                count: "$count",
+                category: "$_id",
+                // symbols: "$symbol_ids",
             },
         },
     ]);
