@@ -88,7 +88,7 @@ export const placeOrder = async (req: Request, res: Response) => {
         }
 
         const orderResult = await createOrder(accountId, req.body);
-        console.log(`🎁🎀`, req.body);
+        // console.log(`🎁🎀`, req.body);
         // console.log(`user id = ${dbUser._id}`);
         const postObj: ISocialModel = {
             symbol: orderResult.symbol,

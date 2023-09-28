@@ -22,6 +22,7 @@ const toLimitOrder = (orderForm: any) => {
         side: "buy",
         type: "limit",
         time_in_force: "day",
+
         qty: orderForm?.quantity ?? 1,
         symbol: orderForm?.symbol ?? "AAPL",
         limit_price: orderForm?.limitPrice ?? "1",
@@ -33,6 +34,7 @@ const toMarketOrder = (orderForm: any) => {
         side: "buy",
         type: "market",
         time_in_force: "day",
+        // commission_bps: "5",
         qty: orderForm?.quantity ?? 1,
         symbol: orderForm?.symbol ?? "AAPL",
     };

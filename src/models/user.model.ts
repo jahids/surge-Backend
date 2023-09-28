@@ -52,6 +52,7 @@ const userSchema = new Schema<IUserModel>(
         watch_list: [
             {
                 type: String,
+                default: [],
             },
         ],
         following: [

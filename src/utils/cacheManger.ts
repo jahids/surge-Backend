@@ -14,6 +14,11 @@ const cacheOptions: NodeCache.Options = {
 const orderCache = new NodeCache({ ...cacheOptions, stdTTL: 3 * 60 * 1000 });
 export const __userCache__ = new NodeCache(cacheOptions);
 export const __symbolCache__ = new NodeCache(cacheOptions);
+export const __positionCache__ = new NodeCache({
+    stdTTL: 60,
+    deleteOnExpire: true,
+    checkperiod: 59,
+});
 const productCache = new NodeCache(cacheOptions);
 
 const symbolCache = new NodeCache({ stdTTL: 0 });
