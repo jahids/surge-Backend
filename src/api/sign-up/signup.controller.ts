@@ -32,13 +32,20 @@ export const signupController = async (req: Request, res: Response) => {
         });
 
         if (dbUser?.email) {
-            const signedToken = await generateJwt({ email: email });
+            const signedToken = await generateJwt({
+                email: email,
+                dbId: dbUser._id,
+            });
             res.cookie("token", signedToken, {
                 maxAge: getTokenLife(),
             });
-            return res
-                .status(200)
-                .json(ApiSuccess({ token: signedToken, email: email }));
+            return res.status(200).json(
+                ApiSuccess({
+                    token: signedToken,
+                    email: email,
+                    dbId: dbUser._id,
+                }),
+            );
         } else {
             return res
                 .status(400)
@@ -107,9 +114,14 @@ export const signin = async (req: Request, res: Response) => {
             res.cookie("token", signedToken, {
                 maxAge: getTokenLife(),
             });
-            return res
-                .status(200)
-                .json(ApiSuccess({ multiStepCompleted, token: signedToken }));
+            return res.status(200).json(
+                ApiSuccess({
+                    multiStepCompleted,
+                    token: signedToken,
+                    email: dbUser.email,
+                    dbId: dbUser._id,
+                }),
+            );
         }
 
         return res.status(400).json(ApiError("user doesn't exist!"));

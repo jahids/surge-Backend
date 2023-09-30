@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { TradeSdk } from "../../utils/TradeSdk";
 import { ApiSuccess } from "../../utils/ApiSuccess";
 import { ApiError } from "../../utils/ApiError";
+import { __symbolCache__ } from "../../utils/cacheManger";
+import { BrokerInstance, getAlpacaInstance } from "../../utils/AlpacaInstance";
 
 let epicData: any = null;
 
@@ -19,12 +21,14 @@ export const getAllStock = async (req: Request, res: Response) => {
                 status: "active",
             });
 
-            const data = Allstock.filter(
-                (v: any) =>
+            const data = Allstock.filter((v: any) => {
+                __symbolCache__.set(v.symbol, v);
+                return (
                     v.status == "active" &&
                     v.tradable == true &&
-                    v.class != "crypto",
-            );
+                    v.class != "crypto"
+                );
+            });
             epicData = data;
         }
         let finalData = epicData;
@@ -41,6 +45,29 @@ export const getAllStock = async (req: Request, res: Response) => {
         }
         finalData = finalData.slice(finalStart, finalLimit);
         return res.status(200).json(ApiSuccess(finalData, epicData?.length));
+    } catch (error) {
+        return res.status(500).json(ApiError((error as Error).message));
+    }
+};
+export const getCachedAsset = async (req: Request, res: Response) => {
+    try {
+        const { name } = req.params;
+        if (!name) {
+            return res.status(400).json(ApiError("asset name required"));
+        }
+        const result = __symbolCache__.get(name?.toString());
+
+        if (result) {
+            return res.status(200).json(ApiSuccess(result));
+        }
+        //get from api and set in
+
+        const { data } = await BrokerInstance.get(`/v1/assets/${name}`);
+        if (data.symbol) {
+            __symbolCache__.set(data.symbol, data);
+        }
+
+        return res.status(200).json(ApiSuccess(data));
     } catch (error) {
         return res.status(500).json(ApiError((error as Error).message));
     }

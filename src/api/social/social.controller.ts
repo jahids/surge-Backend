@@ -18,6 +18,10 @@ import {
 import { ICustomRequest } from "../../types/interfaces/ICustomRequest";
 import { getAllClients } from "../../services/Broker.service";
 import { getUsersFollowing } from "./social.service";
+import { getAlpacaInstance } from "../../utils/AlpacaInstance";
+const BrokerInstance = getAlpacaInstance();
+
+const socialOrderCache: any = {};
 
 export const getPeople = async (req: Request, res: Response) => {
     try {
@@ -119,6 +123,35 @@ export const updateUserFollowing = async (req: Request, res: Response) => {
         const { whom } = req.params;
         const result = await updateFollowing(email, whom);
         return res.status(200).json(ApiSuccess(result));
+    } catch (error) {
+        return res.status(500).json(ApiError((error as Error).message));
+    }
+};
+export const getSocialOrder = async (req: Request, res: Response) => {
+    try {
+        const { user_id, order_id } = req.query;
+        if (!order_id || !user_id) {
+            return res.status(400).json(ApiError(`user id/order id missing`));
+        }
+        // console.log(`user_id : ${user_id} order_id : ${order_id}`);
+
+        const strOrderId = order_id?.toString();
+
+        if (order_id && socialOrderCache[strOrderId]) {
+            return res
+                .status(200)
+                .json(ApiSuccess(socialOrderCache[strOrderId]));
+        }
+
+        const { data } = await BrokerInstance.get(
+            `/v1/trading/accounts/${user_id}/orders/${order_id}`,
+        );
+
+        if (data && data.status == "filled") {
+            socialOrderCache[order_id?.toString()] = { ...data, cached: true };
+        }
+
+        return res.status(200).json(ApiSuccess(data));
     } catch (error) {
         return res.status(500).json(ApiError((error as Error).message));
     }

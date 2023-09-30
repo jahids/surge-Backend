@@ -4,3 +4,8 @@ export interface ICustomRequest extends Request {
     alpaca_id: string;
     dbId: string;
 }
+
+export interface IPortfolioRequest extends ICustomRequest {
+    external_id?: string;
+    external_dbId?: string;
+}

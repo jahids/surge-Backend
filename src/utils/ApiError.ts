@@ -19,7 +19,7 @@ export function ApiError(error: any, data: any = null) {
         finalError = error.message;
     }
     if (error instanceof AxiosError) {
-        finalError = error.response?.data;
+        finalError = error.response?.data?.error;
     }
 
     const resultObj = {

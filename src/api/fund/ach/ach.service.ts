@@ -21,10 +21,6 @@ export const createRelation = async (
     //find db user & check realtionship status
     const dbUser = await getUserByEmail(email);
     if (!dbUser?.email) {
-        //user doesn't exist
-        // return res
-        //     .status(403)
-        //     .json(ApiError(`No user found with associated Email!`));
         throw new Error(`user doesn't exist.`);
     }
     //max allowed relationship at once

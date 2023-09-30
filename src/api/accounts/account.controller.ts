@@ -11,10 +11,12 @@ import {
     findUserByDbId,
     getUserByAlpacaId,
     updateAlpacaId,
+    updateUserName,
 } from "../../models/user.model";
 import { generateJwt, getTokenLife } from "../../middleware/auth-middleware";
 import { AxiosError } from "axios";
 import { ICustomRequest } from "../../types/interfaces/ICustomRequest";
+import { cacheUser, getCachedUser } from "../../utils/cacheManger";
 
 export const createAccount = async (req: Request, res: Response) => {
     try {
@@ -22,7 +24,7 @@ export const createAccount = async (req: Request, res: Response) => {
         console.log(`🔥🎇🎆🔥`, req.body);
         const acData = await createClientAccount(req.body, req.ip);
         //now update the user db with alpaca user id
-
+        const _name_ = req.body.given_name + " " + req.body.family_name;
         const {
             contact: { email_address },
             id,
@@ -30,6 +32,7 @@ export const createAccount = async (req: Request, res: Response) => {
 
         // update db user
         const dbUser = await updateAlpacaId(email_address, id);
+        await updateUserName(email_address, _name_);
         //set http cookie with data
         const signedToken = await generateJwt({
             email: email_address,
@@ -75,10 +78,36 @@ export const singleAccounts = async (req: Request, res: Response) => {
         const acData = await getSingleAccount(userId);
         const dbData = await getUserByAlpacaId(userId);
 
-        return res.status(200).json(ApiSuccess({ alpaca: acData, db: dbData }));
+        const resultObj = { alpaca: acData, db: dbData };
+
+        return res.status(200).json(ApiSuccess(resultObj));
         // return res.status(200).json(req.body);
     } catch (error) {
         return res.status(500).json(ApiError(error, userId));
+    }
+};
+//🏺
+export const getCachedAccount = async (req: Request, res: Response) => {
+    try {
+        const { dbId } = req.params;
+        const userId = dbId;
+        const tempResult = getCachedUser(userId);
+        if (tempResult) {
+            return res.status(200).json(ApiSuccess(tempResult));
+        }
+        const dbData = await findUserByDbId(userId);
+
+        if (!dbData || !dbData?.alpaca_id) {
+            return res.status(404).json(ApiError("user not found"));
+        }
+        const acData = await getSingleAccount(dbData?.alpaca_id);
+        const resultObj = { alpaca: acData, db: dbData };
+
+        cacheUser(userId, resultObj);
+        return res.status(200).json(ApiSuccess(resultObj));
+        // return res.status(200).json(req.body);
+    } catch (error) {
+        return res.status(500).json(ApiError(error));
     }
 };
 export const singleAccountsByDbId = async (req: Request, res: Response) => {

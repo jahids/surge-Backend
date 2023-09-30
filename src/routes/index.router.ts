@@ -7,7 +7,10 @@ import { accountRouter } from "../api/accounts/account.routes";
 import { newsRouter } from "../api/news/news.route";
 import { StockRouter } from "../api/assets/assets.route";
 import { symbolRouter } from "../api/symbol-category/symbol.router";
-import { getCategories } from "../api/symbol-category/symbol.controller";
+import {
+    getCategories,
+    getCategoryNameList,
+} from "../api/symbol-category/symbol.controller";
 import { moversRouter } from "../api/topmovers/topMovers.route";
 import { signin, signout } from "../api/sign-up/signup.controller";
 import { achRouter } from "../api/fund/ach/ach.routes";
@@ -18,6 +21,8 @@ import { plaidRouter } from "../api/plaid/plaid.route";
 import { historicalRoute } from "../api/historicaldata/historicaldata.route";
 import { socialRouter } from "../api/social/social.route";
 import { userRouter } from "../api/user/user.route";
+import { portfolioRouter } from "../api/portfolio/portfolio.routes";
+import { watchlistRouter } from "../api/watchlist/watchlist.router";
 
 const indexRouter = Router();
 
@@ -61,6 +66,7 @@ indexRouter.use("/news", newsRouter);
 //     🧲🧰🧰🧲🧲🧲🧲🧲🏮🏮    miscellaneous   🔦🏮🏮🏮🏮🏮📔🏮🏮
 
 indexRouter.use("/categories", getCategories);
+indexRouter.use("/categories-name", getCategoryNameList);
 
 indexRouter.use("/accounts", accountRouter);
 indexRouter.use("/ach", achRouter);
@@ -69,11 +75,13 @@ indexRouter.use("/ach", achRouter);
 indexRouter.use("/stock", StockRouter);
 //get symbol and info
 indexRouter.use(`/symbol`, symbolRouter);
-
+//portfolio
+indexRouter.use(`/portfolio`, portfolioRouter);
 // order
 indexRouter.use(`/order`, tradeOrderRouter);
 //user
 indexRouter.use(`/user`, userRouter);
+indexRouter.use(`/watchlist`, watchlistRouter);
 
 //social
 indexRouter.use(`/social`, socialRouter);

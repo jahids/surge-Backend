@@ -12,6 +12,7 @@ import { getUserByEmail } from "../../models/user.model";
 import {
     getPeople,
     getSinglePost,
+    getSocialOrder,
     getUserFollowingPosts,
     getUserPosts,
     postComment,
@@ -70,3 +71,6 @@ socialRouter.get(`/post/:id/like`, updatePostReaction);
 
 // user following another user
 socialRouter.get(`/new-following/:whom`, updateUserFollowing);
+
+//get social order
+socialRouter.get(`/order`, getSocialOrder);

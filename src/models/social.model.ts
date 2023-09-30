@@ -15,6 +15,13 @@ export interface IComment {
     text: string;
     links: string[];
 }
+export interface ISocialOrderDetails {
+    order_id: string;
+    client_id: string;
+    time: Date;
+    text: string;
+    links: string[];
+}
 
 export type orderType = "market" | "limit";
 
@@ -22,7 +29,9 @@ export interface ISocialModel {
     user: Types.ObjectId;
     text: string;
     order_id: string;
+    buyer_id: string;
     order_type: orderType;
+    buying_price: string | number;
     symbol?: string;
     links: [string];
     like: string[];
@@ -48,8 +57,13 @@ const socialSchema = new mongoose.Schema<ISocialModel>(
             type: String,
             required: true,
         },
+        buyer_id: {
+            type: String,
+            required: true,
+        },
         order_type: String,
         like: [String],
+        links: [String],
         comments: [
             {
                 user_id: {
@@ -105,6 +119,40 @@ export async function PostsById(postId: string) {
                 },
             },
         },
+        {
+            $unwind: { path: "$comments", preserveNullAndEmptyArrays: true },
+        },
+
+        // Use $sort to sort the comments by 'time' in descending order (newest first)
+        {
+            $sort: {
+                "comments.time": -1,
+            },
+        },
+
+        // Group the comments back into an array
+        {
+            $group: {
+                _id: "$_id",
+                comments: {
+                    $push: "$comments",
+                },
+                user: { $first: "$user" },
+                buyer_id: { $first: "$buyer_id" },
+                symbol: { $first: "$symbol" },
+                text: { $first: "$text" },
+                like: { $first: "$like" },
+                order_id: { $first: "$order_id" },
+                order_type: { $first: "$order_type" },
+                createdAt: { $first: "$createdAt" },
+                links: { $first: "$links" },
+                _data: { $first: "$_data" },
+                // symbol : {$first : "$symbol"},
+
+                // Include other fields you want to keep here
+            },
+        },
+
         {
             $lookup: {
                 from: "users",

@@ -46,14 +46,14 @@ import { ApiError } from "../../utils/ApiError";
 
 export const historicaldata = async (req: Request, res: Response) => {
     try {
-        const { dateFrom, symbol, startdate } = req?.params;
+        const { dateFrom, symbol, startdate } = req.params;
         // Define the API request configuration
         const config = {
             method: "get",
             maxBodyLength: Infinity,
             url: "http://api.marketstack.com/v1/eod",
             params: {
-                access_key: "9bb7121cefa8c8c7d092d4676813b413",
+                access_key: process.env.MARKETSTACK_API_KEY,
                 symbols: symbol,
                 date_from: dateFrom,
                 date_to: startdate,
@@ -64,7 +64,7 @@ export const historicaldata = async (req: Request, res: Response) => {
         const response = await axios.request(config);
 
         // Log the response data (for debugging purposes)
-        console.log("API Response:", response?.data);
+        // console.log("API Response:", response?.data);
 
         // Return the API response to the client as a successful response
         return res.status(200).json(ApiSuccess(response?.data));
