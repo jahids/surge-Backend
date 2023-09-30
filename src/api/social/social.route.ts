@@ -9,8 +9,20 @@ import {
 } from "../../models/social.model";
 import { ICustomRequest } from "../../types/interfaces/ICustomRequest";
 import { getUserByEmail } from "../../models/user.model";
+import {
+    getPeople,
+    getSinglePost,
+    getUserFollowingPosts,
+    getUserPosts,
+    postComment,
+    updatePostReaction,
+    updateUserFollowing,
+} from "./social.controller";
 
 export const socialRouter = Router();
+
+//get list of social users
+socialRouter.get(`/people`, getPeople);
 
 //get social feed of a  user
 socialRouter.get(`/social-feed`, (req: Request, res: Response) => {
@@ -25,19 +37,11 @@ socialRouter.post(`/post`, async (req: Request, res: Response) => {
 });
 
 //get a post
-
-socialRouter.get(`/post/:id`, async (req: Request, res: Response) => {
-    // get specific post
-    try {
-        const { id } = req.params;
-        console.log(` i am here  : ${id}`);
-        const result = await PostsById(id);
-        return res.status(200).json(ApiSuccess(result));
-    } catch (error) {
-        res.status(500).send(ApiError(`${(error as Error).message}`));
-    }
-});
-
+socialRouter.get(`/post/:id`, getSinglePost);
+//get posts of a user
+socialRouter.get(`/post/user/:userId`, getUserPosts);
+//get list of a users following post
+socialRouter.get(`/posts/following`, getUserFollowingPosts);
 //delete a post
 socialRouter.delete(`/post/:id`, (req: Request, res: Response) => {
     // get specific post
@@ -46,28 +50,7 @@ socialRouter.delete(`/post/:id`, (req: Request, res: Response) => {
 
 //add comments
 
-socialRouter.post(`/post/:id/comment`, async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const email = (req as ICustomRequest).user_mail;
-        const dbUser = await getUserByEmail(email);
-        if (!dbUser) {
-            return res.status(404).json(ApiError(`user not found!`));
-        }
-        const commentBody: IComment = {
-            time: new Date(),
-            text: req.body?.text,
-            links: req.body?.links,
-            user_id: dbUser._id,
-        };
-        console.log(`body  : `, req.body);
-        const result = await addCommets(id, commentBody);
-        // console.log(`result : `, result);
-        return res.status(200).json(ApiSuccess(result));
-    } catch (error) {
-        return res.status(500).send(ApiError(`${(error as Error).message}`));
-    }
-});
+socialRouter.post(`/post/:id/comment`, postComment);
 
 //get  comments
 socialRouter.get(`/post/:id/comment`, async (req: Request, res: Response) => {
@@ -83,25 +66,7 @@ socialRouter.delete(
 );
 
 //like/dislike
-socialRouter.get(`/post/:id/like`, async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const email = (req as ICustomRequest).user_mail;
-        const result = await updateLike(id, email);
-        // console.log(`result : `, result);
-        return res.status(200).json(ApiSuccess(result));
-    } catch (error) {
-        return res.status(500).send(ApiError(`${(error as Error).message}`));
-    }
-});
+socialRouter.get(`/post/:id/like`, updatePostReaction);
 
-// socialRouter.post(`/:postId/comments`, async (req: Request, res: Response) => {
-//     // console.log(`body  : `, req.body);
-//     res.status(200).json(ApiError(req.body));
-// });
-// socialRouter.get(`/:postId/comments`, async (req: Request, res: Response) => {
-//     console.log(`body  : `, req.body);
-// });
-// socialRouter.get(`/post/:postId`, async (req: Request, res: Response) => {
-//     console.log(`body  : `, req.body);
-// });
+// user following another user
+socialRouter.get(`/new-following/:whom`, updateUserFollowing);

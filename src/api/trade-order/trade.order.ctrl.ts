@@ -74,7 +74,7 @@ export const singleOrder = async (req: Request, res: Response) => {
         const data = await SingleOrderDetails(userId, order_id);
         return res.status(200).json(ApiSuccess(data));
     } catch (error) {
-        return res.status(500).json(ApiError(`${(error as Error).message}`));
+        return res.status(500).json(ApiError(error));
     }
 };
 

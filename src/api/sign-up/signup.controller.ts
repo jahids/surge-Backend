@@ -93,7 +93,7 @@ export const signin = async (req: Request, res: Response) => {
             if (matched) {
                 return res.status(401).json(ApiError(`password didn't match!`));
             }
-            const tokenObject: any = { email: email };
+            const tokenObject: any = { email: email, dbId: dbUser._id };
             //check if user completed multisteps
             let multiStepCompleted = false;
             if (dbUser?.alpaca_id) {

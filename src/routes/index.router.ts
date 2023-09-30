@@ -17,6 +17,7 @@ import { ApiSuccess } from "../utils/ApiSuccess";
 import { plaidRouter } from "../api/plaid/plaid.route";
 import { historicalRoute } from "../api/historicaldata/historicaldata.route";
 import { socialRouter } from "../api/social/social.route";
+import { userRouter } from "../api/user/user.route";
 
 const indexRouter = Router();
 
@@ -49,6 +50,8 @@ indexRouter.use("/signout", signout);
 
 // indexRouter.use(AuthMiddleware);
 
+//
+
 indexRouter.use("/plaid", plaidRouter);
 // news route
 indexRouter.use("/news", newsRouter);
@@ -69,6 +72,8 @@ indexRouter.use(`/symbol`, symbolRouter);
 
 // order
 indexRouter.use(`/order`, tradeOrderRouter);
+//user
+indexRouter.use(`/user`, userRouter);
 
 //social
 indexRouter.use(`/social`, socialRouter);

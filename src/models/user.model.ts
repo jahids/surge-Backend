@@ -8,6 +8,7 @@ export interface IUserModel {
     ach: string;
     bank: string;
     watch_list: Array<string>;
+    following?: Array<Types.ObjectId>;
 }
 
 const userSchema = new Schema<IUserModel>(
@@ -38,6 +39,13 @@ const userSchema = new Schema<IUserModel>(
                 type: String,
             },
         ],
+        following: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "user",
+                default: [],
+            },
+        ],
     },
     {
         timestamps: true,
@@ -55,9 +63,20 @@ export const getUserByEmail = async (email: string) => {
         throw new Error("failed to get user from db");
     }
 };
+export const findUserByDbId = async (id: string) => {
+    try {
+        const user = await userModel.findOne({ _id: id }).exec();
+        return user;
+    } catch (error) {
+        throw new Error("failed to get user from db");
+    }
+};
 export const getUserByAlpacaId = async (id: string) => {
     try {
-        const user = await userModel.findOne({ alpaca_id: id }).exec();
+        const user = await userModel
+            .findOne({ alpaca_id: id })
+            .select("-password")
+            .exec();
         return user;
     } catch (error) {
         throw new Error("failed to get user from db");
@@ -98,4 +117,44 @@ export const updateAch = async (email: string, relationId: string) => {
     } catch (error) {
         throw new Error("failed to get user from db");
     }
+};
+
+export const updateFollowing = async (
+    userEmail: string,
+    targetUser: string,
+) => {
+    const tdp = new mongoose.Types.ObjectId(targetUser);
+    const dbUser = await userModel.findOne({ email: userEmail }).exec();
+    if (dbUser) {
+        const newFollowerList = dbUser.following?.filter(
+            (v) => v.toString() != targetUser,
+        );
+        if (newFollowerList?.length == dbUser.following?.length) {
+            newFollowerList?.push(tdp);
+        }
+        //update following list
+        const updated = await userModel
+            .findOneAndUpdate(
+                { email: userEmail },
+                {
+                    $set: {
+                        following: newFollowerList,
+                    },
+                },
+                {
+                    new: true,
+                },
+            )
+            .exec();
+        return updated;
+    }
+    return null;
+};
+
+export const allUser = async () => {
+    const result = await userModel
+        .find({ alpaca_id: { $ne: null } })
+        .select(["alpaca_id"])
+        .exec();
+    return result;
 };
