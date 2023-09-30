@@ -2,7 +2,8 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 
 import { errorResponse } from "./error-middleware";
-import { ApiError } from "utils/ApiError";
+import { ApiError } from "../utils/ApiError";
+
 
 // @desc Handles async by resolving, and providing error handling to every request
 
@@ -16,7 +17,7 @@ export const asyncHandler = (
     // If rejected, return error response
     Promise
       .resolve(fn(req, res, next))
-      .catch((error: ApiError) => {
+      .catch((error: any) => {
       errorResponse(error, req, res, next);
     });
   };

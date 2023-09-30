@@ -74,8 +74,14 @@ export const getUserFollowingPosts = async (req: Request, res: Response) => {
         if (following) {
             finalResult = await MultipleUserPosts(following);
         }
+        finalResult = finalResult.flat(Infinity);
+        finalResult.sort((a: any, b: any) => {
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            return dateA - dateB;
+        });
 
-        return res.status(200).json(ApiSuccess(finalResult.flat(Infinity)));
+        return res.status(200).json(ApiSuccess(finalResult));
     } catch (error) {
         res.status(400).send(ApiError(`${(error as Error).message}`));
     }

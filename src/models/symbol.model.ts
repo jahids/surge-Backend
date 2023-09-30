@@ -154,8 +154,8 @@ export async function particularCategorySymbols(catName: string) {
     return {};
 }
 
-export async function distinctCategory() {
-    const limit = 15;
+export async function distinctCategory(limit: number = 15) {
+    // const limit = 15;
     const result = await symbolModel.aggregate([
         {
             $match: {

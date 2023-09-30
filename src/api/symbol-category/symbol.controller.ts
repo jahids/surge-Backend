@@ -99,7 +99,14 @@ export async function getCategories(req: Request, res: Response) {
 
 export async function getCategoryNameList(req: Request, res: Response) {
     try {
-        const result = await distinctCategory();
+        const { limit } = req.query;
+        let finalLimit = limit || 0;
+        if (!limit) {
+            finalLimit = 15;
+        } else {
+            finalLimit = Number(limit.toString());
+        }
+        const result = await distinctCategory(finalLimit);
         return res.status(200).json(ApiSuccess(result));
     } catch (error) {
         return res.status(500).send(ApiError((error as Error).message));

@@ -8,6 +8,7 @@ import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import http from "http";
+import path from "node:path";
 // Setup .env variables for app usage
 dotenv.config();
 
@@ -19,6 +20,7 @@ import { getAppPort } from "./utils/generic.utils";
 
 // Setup constant variables
 const PORT = getAppPort();
+const frontendDist = path.join(__dirname, `../public`);
 const RATE_TIME_LIMIT = Number(process.env.RATE_TIME_LIMIT) || 15;
 const RATE_REQUEST_LIMIT = Number(process.env.RATE_REQUEST_LIMIT) || 100;
 
@@ -34,7 +36,7 @@ app.use(cookieParser());
 // Detailed server logging
 
 app.use(morgan("dev"));
-
+app.use(express.static(frontendDist));
 // Limit rate of requests
 // Alternatively, you can pass through specific routes for different limits based on route
 
@@ -57,6 +59,10 @@ app.use(hpp());
 
 // Setup index routing
 app.use("/api", indexRouter);
+
+app.get("/p", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/index.html"));
+});
 
 // Listen to specified port in .env or default 5000
 const server = http.createServer(app);

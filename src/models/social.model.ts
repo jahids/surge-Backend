@@ -106,6 +106,7 @@ export async function PostsByUser(userId: string) {
 }
 
 export async function PostsById(postId: string) {
+    //single post by id
     // console.log(`user id = ${postId}`);
     const newId = new mongoose.Types.ObjectId(postId);
 
