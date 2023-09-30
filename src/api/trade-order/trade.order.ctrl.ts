@@ -6,6 +6,7 @@ import {
     OrderList,
     SingleOrderDetails,
     createOrder,
+    createSellOrder,
     sellOrder,
 } from "./trade.service";
 import {
@@ -79,6 +80,7 @@ export const singleOrder = async (req: Request, res: Response) => {
 };
 
 export const placeOrder = async (req: Request, res: Response) => {
+    //buy order
     try {
         const accountId = (req as ICustomRequest).alpaca_id;
         const email = (req as ICustomRequest).user_mail;
@@ -100,6 +102,7 @@ export const placeOrder = async (req: Request, res: Response) => {
             like: [],
             links: req.body?.links || [],
             order_type: (orderResult?.order_type as orderType) ?? " market",
+            order_side: "buy",
         };
         const post = await createSocialPost(postObj);
         // console.log(post);
@@ -108,26 +111,59 @@ export const placeOrder = async (req: Request, res: Response) => {
             .status(200)
             .json(ApiSuccess({ order: orderResult, post: postObj }));
     } catch (error) {
-        console.log(error);
-        return res.status(500).json(ApiError(`${(error as Error).message}`));
+        // console.log(error);
+        return res.status(500).json(ApiError(error));
     }
 };
 export const placeSellOrder = async (req: Request, res: Response) => {
+    // try {
+    //     const alpacaId = (req as ICustomRequest).alpaca_id;
+    //     const { symbol, qty, time_in_force, type } = req.body;
+    //     const sellOrderForm = {
+    //         side: "sell",
+    //         type: type ?? "market",
+    //         time_in_force: time_in_force ?? "day",
+    //         symbol: symbol,
+    //         qty: qty,
+    //     };
+
+    //     const result = await sellOrder(alpacaId, sellOrderForm);
+
+    //     return res.status(200).json(ApiSuccess(req.body));
+    // } catch (error) {
+    //     return res.status(500).json(ApiError(`${(error as Error).message}`));
+    // }
     try {
-        const alpacaId = (req as ICustomRequest).alpaca_id;
-        const { symbol, qty, time_in_force, type } = req.body;
-        const sellOrderForm = {
-            side: "sell",
-            type: type ?? "market",
-            time_in_force: time_in_force ?? "day",
-            symbol: symbol,
-            qty: qty,
+        const accountId = (req as ICustomRequest).alpaca_id;
+        const email = (req as ICustomRequest).user_mail;
+        const dbUser = await getUserByEmail(email);
+        if (!dbUser) {
+            return res.status(404).json(ApiError(`User not found!`));
+        }
+
+        const orderResult = await createSellOrder(accountId, req.body);
+        // console.log(`🎁🎀`, req.body);
+        // console.log(`user id = ${dbUser._id}`);
+        const postObj: ISocialModel = {
+            symbol: orderResult.symbol,
+            user: new Types.ObjectId(dbUser.id),
+            order_id: orderResult.id as string,
+            buyer_id: accountId,
+            text: (req.body?.post as string) ?? "",
+            buying_price: req.body?.totalPrice,
+            like: [],
+            links: req.body?.links || [],
+            order_type: (orderResult?.order_type as orderType) ?? " market",
+            order_side: "sell",
         };
+        const post = await createSocialPost(postObj);
+        // console.log(post);
 
-        const result = sellOrder(alpacaId, sellOrderForm);
-
-        return res.status(200).json(ApiSuccess(req.body));
+        return res
+            .status(200)
+            .json(ApiSuccess({ order: orderResult, post: postObj }));
     } catch (error) {
-        return res.status(500).json(ApiError(`${(error as Error).message}`));
+        // console.log(error);
+        return res.status(500).json(ApiError(error));
     }
 };

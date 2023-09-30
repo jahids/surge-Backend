@@ -36,6 +36,7 @@ export interface ISocialModel {
     links: [string];
     like: string[];
     comments?: IComment[];
+    order_side: "buy" | "sell";
     _data?: any;
 }
 
@@ -62,6 +63,7 @@ const socialSchema = new mongoose.Schema<ISocialModel>(
             required: true,
         },
         order_type: String,
+        order_side: String,
         like: [String],
         links: [String],
         comments: [
