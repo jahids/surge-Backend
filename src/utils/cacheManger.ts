@@ -1,5 +1,5 @@
 import NodeCache from "node-cache";
-const _life_ = 1 * 60 * 1000; // in seconds -> 1 hours
+const _life_ = 1 * 60 * 60; // in seconds -> 1 hours
 const deleteCheck = 1 * 60; // in seconds -> 1 min
 
 const cacheOptions: NodeCache.Options = {
@@ -11,8 +11,10 @@ const cacheOptions: NodeCache.Options = {
 };
 
 // Create separate cache instances for each object type
-const orderCache = new NodeCache({ ...cacheOptions, stdTTL: 3 * 60 * 1000 });
+const orderCache = new NodeCache({ ...cacheOptions, stdTTL: 3 * 60 * 60 });
 export const __userCache__ = new NodeCache(cacheOptions);
+export const __topMoversCache__ = new NodeCache({ stdTTL: 24 * 60 * 60 });
+
 export const __symbolCache__ = new NodeCache(cacheOptions);
 export const __positionCache__ = new NodeCache({
     stdTTL: 60,

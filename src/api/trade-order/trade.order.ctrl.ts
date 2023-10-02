@@ -17,6 +17,7 @@ import {
 import { getUserByEmail } from "../../models/user.model";
 import { strToId } from "../../utils/generic.utils";
 import { Schema, SchemaTypes, Types } from "mongoose";
+import { increaseSymbolStats } from "../../models/MostTrade";
 
 const _data = {
     id: "d5b5f5c4-6fdd-4140-879d-315408cf793d",
@@ -88,7 +89,11 @@ export const placeOrder = async (req: Request, res: Response) => {
         if (!dbUser) {
             return res.status(404).json(ApiError(`User not found!`));
         }
-
+        increaseSymbolStats(
+            req.body.symbol,
+            Number(req.body.quantity),
+            Number(req.body.totalPrice),
+        );
         const orderResult = await createOrder(accountId, req.body);
         // console.log(`🎁🎀`, req.body);
         // console.log(`user id = ${dbUser._id}`);
@@ -106,12 +111,13 @@ export const placeOrder = async (req: Request, res: Response) => {
         };
         const post = await createSocialPost(postObj);
         // console.log(post);
+        // update symbolstats
 
         return res
             .status(200)
             .json(ApiSuccess({ order: orderResult, post: postObj }));
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         return res.status(500).json(ApiError(error));
     }
 };
@@ -158,7 +164,11 @@ export const placeSellOrder = async (req: Request, res: Response) => {
         };
         const post = await createSocialPost(postObj);
         // console.log(post);
-
+        increaseSymbolStats(
+            postObj.symbol!,
+            Number(req.body.quantity),
+            Number(postObj.buying_price),
+        );
         return res
             .status(200)
             .json(ApiSuccess({ order: orderResult, post: postObj }));

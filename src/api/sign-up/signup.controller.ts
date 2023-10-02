@@ -94,9 +94,12 @@ export const signin = async (req: Request, res: Response) => {
         }
         // check if user  exist
         const dbUser = await getUserByEmail(email);
+
+        // console.log(`user : `, dbUser);
         if (dbUser?.email) {
             //now match password
             const matched = await checkPassword(password, dbUser.password);
+            console.log(`🔏pass=${password} matched ; ${matched}`);
             if (matched) {
                 return res.status(401).json(ApiError(`password didn't match!`));
             }

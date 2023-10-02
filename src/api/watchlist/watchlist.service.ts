@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import userModel, { IUserModel } from "../../models/user.model";
 import { BrokerInstance } from "../../utils/AlpacaInstance";
 
@@ -14,10 +15,57 @@ export const createDefaultWatchlist = async (alpacaId: string) => {
     return result;
 };
 
-export const getUserDbWatchlist = async (dbId: string) => {
-    const result: any = await userModel.findOne({ _id: dbId }).exec();
+export const getUserDbWatchlist = async (dbId: string, limit: any = 3) => {
+    // console.log(`limti = `, limit);
+    // const result: any = await userModel.aggregate([
+    //     {
+    //         $match: { _id: new mongoose.Types.ObjectId(dbId) },
+    //     },
 
-    return result.watch_list || [];
+    //     {
+    //         $project: {
+    //             symbols: { $slice: ["$watch_list", limit] },
+    //         },
+    //     },
+
+    //     {
+    //         $unwind: "$symbols",
+    //     },
+
+    //     {
+    //         $lookup: {
+    //             from: "symbols",
+    //             localField: "symbols",
+    //             foreignField: "symbol",
+    //             as: "symbolDetails",
+    //         },
+    //     },
+    //     {
+    //         $unwind: "$symbolDetails",
+    //     },
+    //     {
+    //         $project: {
+    //             symbol: "$symbolDetails.symbol",
+    //             name: "$symbolDetails.name",
+    //             logo: "$symbolDetails.logo",
+    //         },
+    //     },
+    // ]);
+
+    const result = await userModel
+        .findOne(
+            {
+                _id: dbId,
+            },
+            {
+                watch_list: {
+                    $slice: limit,
+                },
+            },
+        )
+        .exec();
+
+    return result?.watch_list || [];
 };
 
 export const updateDbWatchlist = async (dbId: string, symbol: string) => {

@@ -14,7 +14,10 @@ import {
     findSymbol,
     particularCategorySymbols,
 } from "../../models/symbol.model";
-
+const sanitizeSymbol = (input: string): string => {
+    const match = input.match(/[A-Z]+/);
+    return match ? match[0] : "";
+};
 export async function getSymbolInfo(req: Request, res: Response) {
     try {
         const { name } = req.query;
@@ -22,9 +25,11 @@ export async function getSymbolInfo(req: Request, res: Response) {
             return res.status(400).json(ApiError("symbol name not found!"));
         }
 
-        const dbResult = await findSymbol(name);
+        const refinedSymbol = sanitizeSymbol(name);
 
-        const price = await getCombindedPrice(name);
+        const dbResult = await findSymbol(refinedSymbol);
+
+        const price = await getCombindedPrice(refinedSymbol);
         if (dbResult && dbResult.symbol && dbResult.logo) {
             return res
                 .status(200)
@@ -33,7 +38,7 @@ export async function getSymbolInfo(req: Request, res: Response) {
         // console.log(`name=`, name);
         // const price = await findCurrentPrice(name);
 
-        const { finnhub, yahoo } = await getCombinedSymbol(name);
+        const { finnhub, yahoo } = await getCombinedSymbol(refinedSymbol);
 
         // console.log(`yahoo : `, yahoo);
 

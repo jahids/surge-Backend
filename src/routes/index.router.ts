@@ -23,6 +23,7 @@ import { socialRouter } from "../api/social/social.route";
 import { userRouter } from "../api/user/user.route";
 import { portfolioRouter } from "../api/portfolio/portfolio.routes";
 import { watchlistRouter } from "../api/watchlist/watchlist.router";
+import { surgeStatsRouter } from "../api/surge-stats/surge_routes";
 
 const indexRouter = Router();
 
@@ -85,6 +86,8 @@ indexRouter.use(`/watchlist`, watchlistRouter);
 
 //social
 indexRouter.use(`/social`, socialRouter);
+// top shares in surge
+indexRouter.use(`/surge-stats`, surgeStatsRouter);
 
 indexRouter.get(`/movers-stats/:symbol`, (req: Request, res: Response) => {
     res.status(200).json(

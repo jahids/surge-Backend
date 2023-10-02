@@ -13,7 +13,9 @@ export interface IUserModel {
     bank: string;
     watch_list: Array<string>;
     pfp?: string;
+    all_time_invest: number;
     following?: Array<Types.ObjectId>;
+    follower?: Array<Types.ObjectId>;
 }
 
 const userSchema = new Schema<IUserModel>(
@@ -55,7 +57,18 @@ const userSchema = new Schema<IUserModel>(
                 default: [],
             },
         ],
+        all_time_invest: {
+            type: Number,
+            default: 0,
+        },
         following: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "user",
+                default: [],
+            },
+        ],
+        follower: [
             {
                 type: Schema.Types.ObjectId,
                 ref: "user",
@@ -190,4 +203,37 @@ export const allUser = async () => {
         .select(["alpaca_id"])
         .exec();
     return result;
+};
+
+export const addInvesment = async (userId: string, amount: number) => {
+    const result = await userModel
+        .findOneAndUpdate(
+            { _id: userId },
+            {
+                $inc: {
+                    all_time_invest: amount,
+                },
+            },
+        )
+        .exec();
+    return result;
+};
+
+export const findTopInvestors = async (limit: number) => {
+    const pdf = await userModel
+        .aggregate([
+            {
+                $sort: {
+                    all_time_invest: -1,
+                },
+            },
+            {
+                $project: {
+                    password: 0,
+                },
+            },
+        ])
+        .limit(limit);
+
+    return pdf;
 };

@@ -21,11 +21,40 @@ export const getAllStock = async (req: Request, res: Response) => {
                 status: "active",
             });
 
+            Allstock.sort((a: any, b: any) => {
+                if (a.symbol < b.symbol) {
+                    return -1;
+                }
+                if (a.symbol > b.symbol) {
+                    return 1;
+                }
+                return 0;
+            });
+
+            // for(let i=0;i<10;i++){
+            //     console.log(`i=${i}   -> ${Allstock[i].}`)
+            // }
+            const keywords = [
+                "ETF",
+                "ENF",
+                "FUND",
+                "WARRANT",
+                "Redeemable",
+                "Depository",
+            ];
+
             const data = Allstock.filter((v: any) => {
                 __symbolCache__.set(v.symbol, v);
+
+                const test = !keywords.some((keyword) =>
+                    v.name.toUpperCase().includes(keyword.toUpperCase()),
+                );
+
                 return (
+                    test &&
                     v.status == "active" &&
                     v.tradable == true &&
+                    v.easy_to_borrow == true &&
                     v.class != "crypto"
                 );
             });

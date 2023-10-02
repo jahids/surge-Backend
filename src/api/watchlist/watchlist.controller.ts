@@ -16,13 +16,15 @@ import {
 export const getWatchList = async (req: Request, res: Response) => {
     try {
         //
+        const { limit } = req.query;
+
         const alpacaId = (req as IPortfolioRequest).alpaca_id;
         const dbId = (req as IPortfolioRequest).dbId;
         if (!alpacaId || !dbId) {
             return res.status(400).json(ApiError(`alpaca id not found!`));
         }
-        const result = await getUserDbWatchlist(dbId);
-        return res.status(200).json(ApiSuccess(result));
+        const result = await getUserDbWatchlist(dbId, Number(limit) || 3);
+        return res.status(200).send(ApiSuccess(result));
     } catch (error) {
         return res.status(400).json(ApiError(error));
     }
