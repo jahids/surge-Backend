@@ -41,7 +41,6 @@ const userSchema = new Schema<IUserModel>(
         pfp: {
             type: String,
             required: false,
-            default: defaultPfp,
         },
         ach: {
             type: String,
