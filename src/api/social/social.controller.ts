@@ -10,14 +10,14 @@ import {
     addCommets,
     updateLike,
 } from "../../models/social.model";
-import {
+import userModel, {
     allUser,
     getUserByEmail,
     updateFollowing,
 } from "../../models/user.model";
 import { ICustomRequest } from "../../types/interfaces/ICustomRequest";
 import { getAllClients } from "../../services/Broker.service";
-import { getUsersFollowing } from "./social.service";
+import { FindUserFriendList, getUsersFollowing } from "./social.service";
 import { getAlpacaInstance } from "../../utils/AlpacaInstance";
 const BrokerInstance = getAlpacaInstance();
 
@@ -28,6 +28,53 @@ export const getPeople = async (req: Request, res: Response) => {
         const userList = await getAllClients();
 
         const finalList = await getUsersFollowing(userList);
+
+        // console.log(`user list : `, userList);
+        return res.status(200).json(ApiSuccess(finalList));
+    } catch (error) {
+        return res.status(500).json(ApiError(error));
+    }
+};
+
+export const getDbPeople = async (req: Request, res: Response) => {
+    try {
+        const currentId = (req as ICustomRequest).dbId;
+        const { search } = req.query;
+        let dbUserList = null;
+        if (search?.length) {
+            dbUserList = await userModel
+                .find({
+                    _id: {
+                        $ne: currentId,
+                    },
+                    name: { $regex: search, $options: "i" },
+                })
+                .select("email name pfp alpaca_id createdAt")
+                .exec();
+        } else {
+            dbUserList = await userModel
+                .find({
+                    _id: {
+                        $ne: currentId,
+                    },
+                })
+                .select("email name pfp alpaca_id createdAt")
+                .exec();
+        }
+        return res.status(200).json(ApiSuccess(dbUserList));
+    } catch (error) {
+        return res.status(500).json(ApiError(error));
+    }
+};
+
+export const getFriendList = async (req: Request, res: Response) => {
+    try {
+        const { limit } = req.query;
+        const dbId = (req as ICustomRequest).dbId;
+        const finalList = await FindUserFriendList(
+            dbId,
+            limit?.toString() ? parseInt(limit.toString()) : 0,
+        );
 
         // console.log(`user list : `, userList);
         return res.status(200).json(ApiSuccess(finalList));

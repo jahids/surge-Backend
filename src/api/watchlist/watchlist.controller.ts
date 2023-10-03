@@ -23,7 +23,10 @@ export const getWatchList = async (req: Request, res: Response) => {
         if (!alpacaId || !dbId) {
             return res.status(400).json(ApiError(`alpaca id not found!`));
         }
-        const result = await getUserDbWatchlist(dbId, Number(limit) || 3);
+        const result = await getUserDbWatchlist(
+            dbId,
+            Number(limit) || Number.MAX_SAFE_INTEGER,
+        );
         return res.status(200).send(ApiSuccess(result));
     } catch (error) {
         return res.status(400).json(ApiError(error));

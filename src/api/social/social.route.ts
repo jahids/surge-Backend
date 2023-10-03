@@ -10,6 +10,8 @@ import {
 import { ICustomRequest } from "../../types/interfaces/ICustomRequest";
 import { getUserByEmail } from "../../models/user.model";
 import {
+    getDbPeople,
+    getFriendList,
     getPeople,
     getSinglePost,
     getSocialOrder,
@@ -24,6 +26,9 @@ export const socialRouter = Router();
 
 //get list of social users
 socialRouter.get(`/people`, getPeople);
+socialRouter.get(`/db-people`, getDbPeople);
+
+socialRouter.get(`/friend-list`, getFriendList);
 
 //get social feed of a  user
 socialRouter.get(`/social-feed`, (req: Request, res: Response) => {

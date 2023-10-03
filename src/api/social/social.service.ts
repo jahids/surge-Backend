@@ -1,4 +1,4 @@
-import { getUserByAlpacaId } from "../../models/user.model";
+import userModel, { getUserByAlpacaId } from "../../models/user.model";
 
 export const getAlpacaUserFollowings = async (alpacaId: any) => {
     const result = await getUserByAlpacaId(alpacaId);
@@ -23,4 +23,19 @@ export const getUsersFollowing = async (ids: [any]) => {
         }
     }
     return ids;
+};
+
+export const FindUserFriendList = async (dbId: string, limit: number = 3) => {
+    const result = await userModel
+        .findById(dbId)
+        .populate({
+            path: "following",
+            model: "user", // Assuming the model name is 'User'
+            select: "name email pfp", // Select only the fields you're interested in. Adjust as needed.
+            options: { limit: limit },
+        })
+        .select("following")
+        .exec();
+
+    return result;
 };

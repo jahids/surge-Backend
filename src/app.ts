@@ -60,7 +60,7 @@ app.use(hpp());
 // Setup index routing
 app.use("/api", indexRouter);
 
-app.get("/p", (req, res) => {
+app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 

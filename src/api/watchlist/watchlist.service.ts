@@ -16,7 +16,7 @@ export const createDefaultWatchlist = async (alpacaId: string) => {
 };
 
 export const getUserDbWatchlist = async (dbId: string, limit: any = 3) => {
-    // console.log(`limti = `, limit);
+    console.log(`limti = `, limit);
     // const result: any = await userModel.aggregate([
     //     {
     //         $match: { _id: new mongoose.Types.ObjectId(dbId) },
