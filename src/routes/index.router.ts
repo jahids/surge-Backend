@@ -25,10 +25,17 @@ import { portfolioRouter } from "../api/portfolio/portfolio.routes";
 import { watchlistRouter } from "../api/watchlist/watchlist.router";
 import { surgeStatsRouter } from "../api/surge-stats/surge_routes";
 
+import { TradeSdk } from "../utils/TradeSdk";
+import { portfolioValueJobRunner } from "../services/PortfolioStats.service";
+import { miscellaneousRouter } from "../api/miscellaneous/miscellaneous.routes";
+
 const indexRouter = Router();
 
-indexRouter.get(`/test`, (req: Request, res: Response) => {
-    res.status(200).send(`api home`);
+indexRouter.get(`/test`, async (req: Request, res: Response) => {
+    // const bar = await TradeSdk.getLatestBar("AAPL");
+
+    const quote = await TradeSdk.getLatestQuote("AAPL");
+    res.status(200).json({ result: "api test get", quote });
 });
 
 indexRouter.post(`/test`, (req: Request, res: Response) => {
@@ -94,5 +101,7 @@ indexRouter.get(`/movers-stats/:symbol`, (req: Request, res: Response) => {
         ApiSuccess({ change: (Math.random() * 100).toPrecision(2) }),
     );
 });
-
+indexRouter.use(`/others`, miscellaneousRouter);
+//cron job 1
+portfolioValueJobRunner();
 export default indexRouter;

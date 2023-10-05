@@ -25,7 +25,7 @@ export function ApiError(error: any, data: any = null) {
     const resultObj = {
         success: false,
         data: data,
-        error: finalError ?? "Default Success Message",
+        error: finalError ?? error.response?.data,
     };
 
     return resultObj;

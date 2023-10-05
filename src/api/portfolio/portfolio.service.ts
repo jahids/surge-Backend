@@ -4,6 +4,8 @@ import {
     IUserMargin,
 } from "../../types/interfaces/interfaces.common";
 import { __positionCache__ } from "../../utils/cacheManger";
+import { getYYYYMMDD } from "../../utils/generic.utils";
+import { addNewPortfolioStats } from "../../models/portfolio-stats";
 
 export const UserPortfolio = async (userId: string) => {
     const { data: positions } = await BrokerInstance.get(
@@ -33,6 +35,22 @@ export const UserPositions = async (
     // __positionCache__.set(userId, positions);
     return positions;
 };
+export const UserSymbolPositions = async (
+    userId: string,
+    symbol: string,
+): Promise<IAssetOpenPosition> => {
+    // const oldData: IAssetOpenPosition[] | undefined =
+    //     __positionCache__.get(userId);
+    // if (oldData) {
+    //     return oldData;
+    // }
+    // v1/trading/accounts/{account_id}/positions/{symbol_or_asset_id}
+    const { data: positions } = await BrokerInstance.get(
+        `/v1/trading/accounts/${userId}/positions/${symbol}`,
+    );
+    // __positionCache__.set(userId, positions);
+    return positions;
+};
 
 export const UserTradeActivity = async (userId: string) => {
     const { data } = await BrokerInstance.get(
@@ -41,7 +59,7 @@ export const UserTradeActivity = async (userId: string) => {
     return data;
 };
 
-export const UserRawActivity = async (userId: string) => {
+export const UserRawActivity = async (userId: string): Promise<IUserMargin> => {
     const { data } = await BrokerInstance.get(
         `/v1/trading/accounts/${userId}/account`,
     );
@@ -72,5 +90,15 @@ export const caclulatePositionValues = async (userId: string) => {
         resultInit,
     );
 
+    return result;
+};
+
+export const insertPortfolioHistoryData = async (
+    dbId: any,
+    value: any,
+    date: Date,
+) => {
+    const formatedData = getYYYYMMDD(date);
+    const result = await addNewPortfolioStats(dbId, { date, value });
     return result;
 };

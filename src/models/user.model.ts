@@ -164,10 +164,27 @@ export const updateAch = async (email: string, relationId: string) => {
     }
 };
 
+export const updateUserPfp = async (dbId: string, pfp: string) => {
+    const result = await userModel
+        .findOneAndUpdate(
+            {
+                _id: dbId,
+            },
+            {
+                $set: {
+                    pfp: pfp,
+                },
+            },
+        )
+        .exec();
+    return result;
+};
+
 export const updateFollowing = async (
     userEmail: string,
     targetUser: string,
 ) => {
+    let status = "unfollow";
     const tdp = new mongoose.Types.ObjectId(targetUser);
     const dbUser = await userModel.findOne({ email: userEmail }).exec();
     if (dbUser) {
@@ -176,6 +193,7 @@ export const updateFollowing = async (
         );
         if (newFollowerList?.length == dbUser.following?.length) {
             newFollowerList?.push(tdp);
+            status = "follow";
         }
         //update following list
         const updated = await userModel
@@ -191,7 +209,8 @@ export const updateFollowing = async (
                 },
             )
             .exec();
-        return updated;
+
+        return { updated, status };
     }
     return null;
 };
@@ -235,4 +254,26 @@ export const findTopInvestors = async (limit: number) => {
         .limit(limit);
 
     return pdf;
+};
+
+export const updateUserInvestAmount = async (
+    dbId: string,
+    amount: number | string,
+) => {
+    let finalAmount = amount;
+    if (typeof amount == "string") {
+        finalAmount = Number(amount).valueOf();
+    }
+
+    const data = await userModel
+        .findOneAndUpdate(
+            { _id: dbId },
+            {
+                $inc: {
+                    all_time_invest: finalAmount,
+                },
+            },
+        )
+        .exec();
+    return data;
 };

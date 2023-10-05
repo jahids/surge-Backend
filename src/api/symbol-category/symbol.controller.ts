@@ -14,6 +14,7 @@ import {
     findSymbol,
     particularCategorySymbols,
 } from "../../models/symbol.model";
+import { TradeSdk } from "../../utils/TradeSdk";
 const sanitizeSymbol = (input: string): string => {
     const match = input.match(/[A-Z]+/);
     return match ? match[0] : "";
@@ -33,7 +34,7 @@ export async function getSymbolInfo(req: Request, res: Response) {
         if (dbResult && dbResult.symbol && dbResult.logo) {
             return res
                 .status(200)
-                .json({ ...dbResult.toObject(), price: price });
+                .json(ApiSuccess({ ...dbResult.toObject(), price: price }));
         }
         // console.log(`name=`, name);
         // const price = await findCurrentPrice(name);
@@ -114,7 +115,7 @@ export async function getCategoryNameList(req: Request, res: Response) {
         const result = await distinctCategory(finalLimit);
         return res.status(200).json(ApiSuccess(result));
     } catch (error) {
-        return res.status(500).send(ApiError((error as Error).message));
+        return res.status(500).send(error);
     }
 }
 
@@ -123,5 +124,18 @@ export async function currentPrice(req: Request, res: Response) {
         console.log("dest");
     } catch (error) {
         return res.status(500).send(ApiError((error as Error).message));
+    }
+}
+
+export async function getSymbolHistoryPrice(req: Request, res: Response) {
+    try {
+        const { name } = req.query;
+        if (!name || typeof name != "string") {
+            return res.status(400).json(ApiError("symbol name not found!"));
+        }
+        const result = await TradeSdk.getLatestBar(name);
+        return res.status(200).json(ApiSuccess(result));
+    } catch (error) {
+        return res.status(500).send(ApiError(error));
     }
 }

@@ -14,7 +14,10 @@ import {
     createSocialPost,
     orderType,
 } from "../../models/social.model";
-import { getUserByEmail } from "../../models/user.model";
+import {
+    getUserByEmail,
+    updateUserInvestAmount,
+} from "../../models/user.model";
 import { strToId } from "../../utils/generic.utils";
 import { Schema, SchemaTypes, Types } from "mongoose";
 import { increaseSymbolStats } from "../../models/MostTrade";
@@ -110,8 +113,16 @@ export const placeOrder = async (req: Request, res: Response) => {
             order_side: "buy",
         };
         const post = await createSocialPost(postObj);
-        // console.log(post);
+
         // update symbolstats
+        increaseSymbolStats(
+            postObj.symbol!,
+            Number(req.body.quantity),
+            Number(postObj.buying_price),
+        );
+        updateUserInvestAmount(dbUser._id.toString(), postObj.buying_price);
+
+        //update indivisual stats
 
         return res
             .status(200)
@@ -163,17 +174,19 @@ export const placeSellOrder = async (req: Request, res: Response) => {
             order_side: "sell",
         };
         const post = await createSocialPost(postObj);
-        // console.log(post);
+        // increase symbol stats
         increaseSymbolStats(
             postObj.symbol!,
             Number(req.body.quantity),
             Number(postObj.buying_price),
         );
+        //increase user investments
+
         return res
             .status(200)
             .json(ApiSuccess({ order: orderResult, post: postObj }));
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         return res.status(500).json(ApiError(error));
     }
 };

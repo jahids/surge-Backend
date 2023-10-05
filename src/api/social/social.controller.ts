@@ -19,6 +19,10 @@ import { ICustomRequest } from "../../types/interfaces/ICustomRequest";
 import { getAllClients } from "../../services/Broker.service";
 import { FindUserFriendList, getUsersFollowing } from "./social.service";
 import { getAlpacaInstance } from "../../utils/AlpacaInstance";
+import {
+    INotification,
+    addNotification,
+} from "../../models/notification.model";
 const BrokerInstance = getAlpacaInstance();
 
 const socialOrderCache: any = {};
@@ -125,7 +129,7 @@ export const getUserFollowingPosts = async (req: Request, res: Response) => {
         finalResult.sort((a: any, b: any) => {
             const dateA = new Date(a.createdAt).getTime();
             const dateB = new Date(b.createdAt).getTime();
-            return dateA - dateB;
+            return dateB - dateA;
         });
 
         return res.status(200).json(ApiSuccess(finalResult));
@@ -173,8 +177,28 @@ export const updatePostReaction = async (req: Request, res: Response) => {
 export const updateUserFollowing = async (req: Request, res: Response) => {
     try {
         const email = (req as ICustomRequest).user_mail;
+        const myId = (req as ICustomRequest).dbId;
+
         const { whom } = req.params;
         const result = await updateFollowing(email, whom);
+
+        const self = await getUserByEmail(email);
+
+        const notificationObject: INotification = {
+            user: whom.toString(),
+            fromUser: {
+                pfp: self?.pfp,
+                name: self?.name,
+                dbId: myId,
+            },
+            type: "follow",
+            marked: false,
+        };
+
+        if (result?.status == "follow") {
+            addNotification(notificationObject);
+        }
+
         return res.status(200).json(ApiSuccess(result));
     } catch (error) {
         return res.status(500).json(ApiError((error as Error).message));
