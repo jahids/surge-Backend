@@ -62,6 +62,7 @@ const socialSchema = new mongoose.Schema<ISocialModel>(
             type: String,
             required: true,
         },
+        buying_price: String,
         order_type: String,
         order_side: String,
         like: [String],

@@ -26,7 +26,8 @@ export async function getSymbolInfo(req: Request, res: Response) {
             return res.status(400).json(ApiError("symbol name not found!"));
         }
 
-        const refinedSymbol = sanitizeSymbol(name);
+        const refinedSymbol = name.toString();
+        // const refinedSymbol = sanitizeSymbol(name);
 
         const dbResult = await findSymbol(refinedSymbol);
 
@@ -64,7 +65,7 @@ export async function getSymbolInfo(req: Request, res: Response) {
             finalObj.ipo = new Date(finnhub.ipo);
         }
 
-        const dbObj = await createSymbol(finalObj);
+        createSymbol(finalObj);
 
         // console.log(dbObj);
 

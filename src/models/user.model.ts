@@ -11,6 +11,7 @@ export interface IUserModel {
     alpaca_id: string;
     ach: string;
     bank: string;
+    about_me: string;
     watch_list: Array<string>;
     pfp?: string;
     all_time_invest: number;
@@ -45,6 +46,11 @@ const userSchema = new Schema<IUserModel>(
         ach: {
             type: String,
             required: false,
+        },
+        about_me: {
+            type: String,
+            required: false,
+            default: "",
         },
         bank: {
             type: String,
@@ -173,6 +179,21 @@ export const updateUserPfp = async (dbId: string, pfp: string) => {
             {
                 $set: {
                     pfp: pfp,
+                },
+            },
+        )
+        .exec();
+    return result;
+};
+export const updateUserAboutMe = async (dbId: string, about_me: string) => {
+    const result = await userModel
+        .findOneAndUpdate(
+            {
+                _id: dbId,
+            },
+            {
+                $set: {
+                    about_me: about_me,
                 },
             },
         )

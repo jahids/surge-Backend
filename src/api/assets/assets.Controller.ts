@@ -36,6 +36,8 @@ export const getAllStock = async (req: Request, res: Response) => {
             // }
             const keywords = [
                 "ETF",
+                "EFT",
+                "TRUST",
                 "ENF",
                 "FUND",
                 "WARRANT",

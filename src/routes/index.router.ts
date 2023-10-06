@@ -28,6 +28,7 @@ import { surgeStatsRouter } from "../api/surge-stats/surge_routes";
 import { TradeSdk } from "../utils/TradeSdk";
 import { portfolioValueJobRunner } from "../services/PortfolioStats.service";
 import { miscellaneousRouter } from "../api/miscellaneous/miscellaneous.routes";
+import { notificationRouter } from "../api/notification/notification.routes";
 
 const indexRouter = Router();
 
@@ -95,6 +96,8 @@ indexRouter.use(`/watchlist`, watchlistRouter);
 indexRouter.use(`/social`, socialRouter);
 // top shares in surge
 indexRouter.use(`/surge-stats`, surgeStatsRouter);
+//notification router
+indexRouter.use("/notification", notificationRouter);
 
 indexRouter.get(`/movers-stats/:symbol`, (req: Request, res: Response) => {
     res.status(200).json(

@@ -34,6 +34,7 @@ export const getUnreadNotification = async (dbId: Types.ObjectId | string) => {
             user: dbId,
             marked: false,
         })
+        .sort("-createdAt")
         .exec();
 
     return result;

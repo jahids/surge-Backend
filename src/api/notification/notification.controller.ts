@@ -5,6 +5,7 @@ import {
     getUnreadNotification,
     markAsReadAllNotification,
 } from "../../models/notification.model";
+import { ApiSuccess } from "../../utils/ApiSuccess";
 export const getAllUnreadNotifications = async (
     req: Request,
     res: Response,
@@ -12,7 +13,7 @@ export const getAllUnreadNotifications = async (
     try {
         const dbId = (req as ICustomRequest).dbId;
         const result = await getUnreadNotification(dbId);
-        return res.status(200).json(result);
+        return res.status(200).json(ApiSuccess(result));
     } catch (error) {
         return res.status(500).json(ApiError(error));
     }

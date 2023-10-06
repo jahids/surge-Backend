@@ -10,7 +10,7 @@ export const getTopSurgeMovers = async (req: Request, res: Response) => {
         if (limit && Number(limit.toString())) {
             finalLimit = Number(limit);
         }
-        console.log(`final `, finalLimit);
+        // console.log(`final `, finalLimit);
         const result = await findTopTradedSymbols(finalLimit);
         const { totalQuantity, totalPrice } = await getTotalPriceQuantity();
         const calculatedResult = result?.map((v) => {
